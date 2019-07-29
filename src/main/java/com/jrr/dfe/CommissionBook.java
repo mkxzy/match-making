@@ -5,21 +5,18 @@ import java.util.List;
 
 
 /**
- * 挂单
+ * 委托挂单
  */
-public class CommissionBook {
+public class CommissionBook<T extends Commission> {
 
-    private List<CommissionRecorder> list = new ArrayList<>();
-
-    private CommissionSortMode commissionSort;
+    private final List<CommissionRecorder<T>> list = new ArrayList<>();
 
     private CommissionLocateStrategy strategy;
 
     public CommissionBook(CommissionSortMode commissionSort){
-        this.commissionSort = commissionSort;
-        if(this.commissionSort == CommissionSortMode.LowPriceFirst){
+        if(commissionSort == CommissionSortMode.LowPriceFirst){
             strategy = new LowPriceFirstCommissionStategy(this.list);
-        }else if(this.commissionSort == CommissionSortMode.HighPriceFirst){
+        }else if(commissionSort == CommissionSortMode.HighPriceFirst){
             strategy = new HighPriceFirstCommissionStrategy(this.list);
         }else {
             throw new RuntimeException("CommissionSortMode Invalid");
@@ -30,7 +27,7 @@ public class CommissionBook {
      * 添加到订单列表（排序）
      * @param c
      */
-    public int add(CommissionRecorder c){
+    public int add(CommissionRecorder<T> c){
         int index = strategy.locate(c);
         if(index >= 0){
             list.add(index, c);
@@ -41,7 +38,7 @@ public class CommissionBook {
         }
     }
 
-    public void remove(Commission c){
+    public void remove(CommissionRecorder<T> c){
         list.remove(c);
     }
 
@@ -50,7 +47,7 @@ public class CommissionBook {
      * @param index
      * @return
      */
-    public CommissionRecorder get(int index){
+    public CommissionRecorder<T> get(int index){
         return list.get(index);
     }
 
@@ -62,7 +59,7 @@ public class CommissionBook {
         return list.size();
     }
 
-    public CommissionRecorder head(){
+    public CommissionRecorder<T> head(){
         if(this.isEmpty()){
             throw new RuntimeException("OrderBook is empty");
         }

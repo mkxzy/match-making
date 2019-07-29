@@ -3,6 +3,9 @@ package com.jrr.dfe;
 import java.math.BigDecimal;
 
 
+/**
+ * 简单委托实现
+ */
 public class SimpleCommission implements Commission {
 
     private long amount;

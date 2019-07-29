@@ -1,7 +1,6 @@
 package com.jrr.dfe;
 
 import java.math.BigDecimal;
-import java.util.concurrent.atomic.AtomicLong;
 
 
 /**
@@ -33,10 +32,18 @@ class CommissionRecorder<T extends Commission> implements Commission {
         return commission.getPrice();
     }
 
+    /**
+     * 获取当前数量
+     * @return
+     */
     public long getCurrentAmount() {
         return currentAmount;
     }
 
+    /**
+     * 当前数量减去相应数量（成交）
+     * @param amount
+     */
     public void subCurrentAmount(long amount){
         currentAmount = currentAmount - amount;
     }
