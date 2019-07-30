@@ -6,6 +6,8 @@ package com.jrr.dfe;
  */
 public class CommissionMatching<T extends Commission> {
 
+    private final Object locker = new Object();
+
     // 买盘
     private final CommissionBook<T> bidBook = CommissionBook.HighFirst();
 
@@ -14,7 +16,7 @@ public class CommissionMatching<T extends Commission> {
 
     private DealHandler<T> dealHandler;
 
-    private CommissionDealMaker<T> dealMaker = new LimitPriceCommissionDealMaker<>();
+    private CommissionDealMaker<T> dealMaker;
 
     public CommissionMatching(){
     }
@@ -28,13 +30,17 @@ public class CommissionMatching<T extends Commission> {
      * @param commission
      */
     public void bid(T commission){
-        final CommissionRecorder<T> commissionRecorder = new CommissionRecorder<>(commission);
-        this.getDefaultDealMaker().bid(commissionRecorder, bidBook, askBook, dealHandler);
+        synchronized (locker){
+            final CommissionRecorder<T> commissionRecorder = new CommissionRecorder<>(commission);
+            this.getDefaultDealMaker().bid(commissionRecorder, bidBook, askBook, dealHandler);
+        }
     }
 
     public void bid(T commission, CommissionDealMaker<T> dealMaker){
-        final CommissionRecorder<T> commissionRecorder = new CommissionRecorder<>(commission);
-        dealMaker.bid(commissionRecorder, bidBook, askBook, dealHandler);
+        synchronized(locker) {
+            final CommissionRecorder<T> commissionRecorder = new CommissionRecorder<>(commission);
+            dealMaker.bid(commissionRecorder, bidBook, askBook, dealHandler);
+        }
     }
 
     /**
@@ -42,16 +48,23 @@ public class CommissionMatching<T extends Commission> {
      * @param commission
      */
     public void ask(T commission){
-        final CommissionRecorder<T> commissionRecorder = new CommissionRecorder<>(commission);
-        this.getDefaultDealMaker().ask(commissionRecorder, bidBook, askBook, dealHandler);
+        synchronized (locker){
+            final CommissionRecorder<T> commissionRecorder = new CommissionRecorder<>(commission);
+            this.getDefaultDealMaker().ask(commissionRecorder, bidBook, askBook, dealHandler);
+        }
     }
 
     public void ask(T commission, CommissionDealMaker<T> dealMaker){
-        final CommissionRecorder<T> commissionRecorder = new CommissionRecorder<>(commission);
-        dealMaker.ask(commissionRecorder, bidBook, askBook, dealHandler);
+        synchronized (locker){
+            final CommissionRecorder<T> commissionRecorder = new CommissionRecorder<>(commission);
+            dealMaker.ask(commissionRecorder, bidBook, askBook, dealHandler);
+        }
     }
 
     private CommissionDealMaker<T> getDefaultDealMaker(){
+        if(dealMaker == null){
+            dealMaker = new LimitPriceCommissionDealMaker<>();
+        }
         return dealMaker;
     }
 

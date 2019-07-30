@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 public class LimitPriceCommissionDealMaker<T extends Commission> implements CommissionDealMaker<T>{
 
     public LimitPriceCommissionDealMaker(){
-
     }
 
     @Override
@@ -90,7 +89,7 @@ public class LimitPriceCommissionDealMaker<T extends Commission> implements Comm
             BigDecimal dealPrice = opponentMission.getPrice();
             opponentMission.subCurrentAmount(dealAmount);
             own.subCurrentAmount(dealAmount);
-            System.out.printf("成交数量%d\n", dealAmount);
+//            System.out.printf("成交数量%d\n", dealAmount);
             return this.createDeal(dealPrice, dealAmount, opponentMission);
         }
 

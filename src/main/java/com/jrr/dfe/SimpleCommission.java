@@ -8,13 +8,20 @@ import java.math.BigDecimal;
  */
 public class SimpleCommission implements Commission {
 
+    private String id;
+
     private long amount;
 
     private BigDecimal price;
 
-    public SimpleCommission(long amount, BigDecimal price) {
+    public SimpleCommission(String id, long amount, BigDecimal price) {
+        this.id = id;
         this.amount = amount;
         this.price = price;
+    }
+
+    public String getId() {
+        return id;
     }
 
     @Override

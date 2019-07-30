@@ -83,40 +83,78 @@ public class CommissionBook<T extends Commission> {
     }
 
     /**
-     * 定价优先
+     * 低价优先（二分查找法高性能）
      */
     private static class LowPriceFirstCommissionStategy<T extends Commission> implements CommissionLocateStrategy<T> {
 
         @Override
         public int locate(CommissionRecorder<T> newCommition, List<CommissionRecorder<T>> list) {
-            int index = -1;
-            for(int i = 0; i < list.size(); i++){
-                CommissionRecorder<T> item = list.get(i);
-                if(newCommition.getPrice().compareTo(item.getPrice()) <0){
-                    index = i;
-                    break;
+            int mid;
+            int start = 0;
+            int end = list.size() - 1;
+            while (start <= end){
+                mid = (end - start) / 2 + start;
+                if(newCommition.getPrice().compareTo(list.get(mid).getPrice()) < 0){
+                    if(mid == 0){
+                        return 0;
+                    }
+                    if(newCommition.getPrice().compareTo(list.get(mid-1).getPrice()) >= 0){
+                        return mid;
+                    }
+                    end = mid - 1;
+                } else {
+                    if(mid > end){
+                        return -1;
+                    }
+                    if(newCommition.getPrice().compareTo(list.get(mid).getPrice()) < 0){
+                        return mid;
+                    }
+                    start = mid + 1;
                 }
             }
-            return index;
+            return -1;
+//            for(int i = 0; i < list.size(); i++){
+//                CommissionRecorder<T> item = list.get(i);
+//                if(newCommition.getPrice().compareTo(item.getPrice()) <0){
+//                    index = i;
+//                    break;
+//                }
+//            }
+//            return index;
         }
     }
 
     /**
-     * 高价优先
+     * 高价优先（二分查找法高性能）
      */
     private static class HighPriceFirstCommissionStrategy<T extends Commission> implements CommissionLocateStrategy<T> {
 
         @Override
         public int locate(CommissionRecorder<T> newCommition, List<CommissionRecorder<T>> list) {
-            int index = -1;
-            for(int i = 0; i < list.size(); i++){
-                CommissionRecorder<T> item = list.get(i);
-                if(newCommition.getPrice().compareTo(item.getPrice()) > 0){
-                    index = i;
-                    break;
+            int mid;
+            int start = 0;
+            int end = list.size() - 1;
+            while (start <= end){
+                mid = (end - start) / 2 + start;
+                if(newCommition.getPrice().compareTo(list.get(mid).getPrice()) > 0){
+                    if(mid == 0){
+                        return 0;
+                    }
+                    if(newCommition.getPrice().compareTo(list.get(mid-1).getPrice()) <= 0){
+                        return mid;
+                    }
+                    end = mid - 1;
+                } else {
+                    if(mid > end){
+                        return -1;
+                    }
+                    if(newCommition.getPrice().compareTo(list.get(mid).getPrice()) > 0){
+                        return mid;
+                    }
+                    start = mid + 1;
                 }
             }
-            return index;
+            return -1;
         }
     }
 }
