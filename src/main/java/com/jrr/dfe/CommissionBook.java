@@ -11,16 +11,18 @@ public class CommissionBook<T extends Commission> {
 
     private final List<CommissionRecorder<T>> list = new ArrayList<>();
 
-    private CommissionLocateStrategy strategy;
+    private CommissionLocateStrategy<T> strategy;
 
-    public CommissionBook(CommissionSortMode commissionSort){
-        if(commissionSort == CommissionSortMode.LowPriceFirst){
-            strategy = new LowPriceFirstCommissionStategy(this.list);
-        }else if(commissionSort == CommissionSortMode.HighPriceFirst){
-            strategy = new HighPriceFirstCommissionStrategy(this.list);
-        }else {
-            throw new RuntimeException("CommissionSortMode Invalid");
-        }
+    private CommissionBook(final CommissionLocateStrategy<T> strategy){
+        this.strategy = strategy;
+    }
+
+    static <T extends Commission> CommissionBook<T> HighFirst(){
+        return new CommissionBook<>(new HighPriceFirstCommissionStrategy<T>());
+    }
+
+    static <T extends Commission> CommissionBook<T> LowFirst(){
+        return new CommissionBook<>(new LowPriceFirstCommissionStategy<T>());
     }
 
     /**
@@ -28,7 +30,7 @@ public class CommissionBook<T extends Commission> {
      * @param c
      */
     public int add(CommissionRecorder<T> c){
-        int index = strategy.locate(c);
+        int index = strategy.locate(c, this.list);
         if(index >= 0){
             list.add(index, c);
             return index;
@@ -64,5 +66,57 @@ public class CommissionBook<T extends Commission> {
             throw new RuntimeException("OrderBook is empty");
         }
         return list.get(0);
+    }
+
+    /**
+     * 委托定位策略
+     */
+    private interface CommissionLocateStrategy<T extends Commission> {
+
+        /**
+         * 查找任务的待插入索引
+         * 如果没有合适的，返回-1
+         * @param newCommition
+         * @return
+         */
+        int locate(CommissionRecorder<T> newCommition, List<CommissionRecorder<T>> list);
+    }
+
+    /**
+     * 定价优先
+     */
+    private static class LowPriceFirstCommissionStategy<T extends Commission> implements CommissionLocateStrategy<T> {
+
+        @Override
+        public int locate(CommissionRecorder<T> newCommition, List<CommissionRecorder<T>> list) {
+            int index = -1;
+            for(int i = 0; i < list.size(); i++){
+                CommissionRecorder<T> item = list.get(i);
+                if(newCommition.getPrice().compareTo(item.getPrice()) <0){
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        }
+    }
+
+    /**
+     * 高价优先
+     */
+    private static class HighPriceFirstCommissionStrategy<T extends Commission> implements CommissionLocateStrategy<T> {
+
+        @Override
+        public int locate(CommissionRecorder<T> newCommition, List<CommissionRecorder<T>> list) {
+            int index = -1;
+            for(int i = 0; i < list.size(); i++){
+                CommissionRecorder<T> item = list.get(i);
+                if(newCommition.getPrice().compareTo(item.getPrice()) > 0){
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        }
     }
 }

@@ -6,13 +6,13 @@ import java.math.BigDecimal;
 /**
  * 委托成交记录器
  */
-class CommissionRecorder<T extends Commission> implements Commission {
+public class CommissionRecorder<T extends Commission> implements Commission {
 
     private final T commission;
 
     private long currentAmount;
 
-    public CommissionRecorder(T commission) {
+    CommissionRecorder(T commission) {
         this.commission = commission;
         this.currentAmount = commission.getAmount();
     }
@@ -44,10 +44,14 @@ class CommissionRecorder<T extends Commission> implements Commission {
      * 当前数量减去相应数量（成交）
      * @param amount
      */
-    public void subCurrentAmount(long amount){
+    void subCurrentAmount(long amount){
         currentAmount = currentAmount - amount;
     }
 
+    /**
+     * 获取委托
+     * @return
+     */
     public T getCommission() {
         return commission;
     }

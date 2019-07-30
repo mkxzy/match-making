@@ -7,10 +7,10 @@ package com.jrr.dfe;
 public class CommissionMatching<T extends Commission> {
 
     // 买盘
-    private final CommissionBook<T> bidBook = new CommissionBook<>(CommissionSortMode.HighPriceFirst);
+    private final CommissionBook<T> bidBook = CommissionBook.HighFirst();
 
     // 卖盘
-    private final CommissionBook<T> askBook = new CommissionBook<>(CommissionSortMode.LowPriceFirst);
+    private final CommissionBook<T> askBook = CommissionBook.LowFirst();
 
     private DealHandler<T> dealHandler;
 

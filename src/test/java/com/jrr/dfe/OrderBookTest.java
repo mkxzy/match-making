@@ -9,7 +9,7 @@ public class OrderBookTest {
 
     @Test
     public void testAddLowFirst(){
-        CommissionBook<SimpleCommission> orderBook = new CommissionBook<>(CommissionSortMode.LowPriceFirst);
+        CommissionBook<SimpleCommission> orderBook = CommissionBook.LowFirst();
         SimpleCommission commission1 = new SimpleCommission(1, BigDecimal.valueOf(1.1));
         SimpleCommission commission2 = new SimpleCommission(1, BigDecimal.valueOf(1.5));
         SimpleCommission commission3 = new SimpleCommission(1, BigDecimal.valueOf(1.2));
@@ -25,7 +25,7 @@ public class OrderBookTest {
 
     @Test
     public void testAddHighFirst(){
-        CommissionBook<SimpleCommission> orderBook = new CommissionBook<>(CommissionSortMode.HighPriceFirst);
+        CommissionBook<SimpleCommission> orderBook = CommissionBook.HighFirst();
         SimpleCommission commission1 = new SimpleCommission(1, BigDecimal.valueOf(1.1));
         SimpleCommission commission2 = new SimpleCommission(1, BigDecimal.valueOf(1.5));
         SimpleCommission commission3 = new SimpleCommission(1, BigDecimal.valueOf(1.2));
