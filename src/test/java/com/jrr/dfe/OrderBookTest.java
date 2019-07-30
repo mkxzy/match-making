@@ -9,13 +9,13 @@ public class OrderBookTest {
 
     @Test
     public void testAddLowFirst(){
-        CommissionBook orderBook = new CommissionBook(CommissionSortMode.LowPriceFirst);
+        CommissionBook<SimpleCommission> orderBook = new CommissionBook<>(CommissionSortMode.LowPriceFirst);
         SimpleCommission commission1 = new SimpleCommission(1, BigDecimal.valueOf(1.1));
         SimpleCommission commission2 = new SimpleCommission(1, BigDecimal.valueOf(1.5));
         SimpleCommission commission3 = new SimpleCommission(1, BigDecimal.valueOf(1.2));
-        orderBook.add(new CommissionRecorder(commission1));
-        orderBook.add(new CommissionRecorder(commission2));
-        orderBook.add(new CommissionRecorder(commission3));
+        orderBook.add(new CommissionRecorder<>(commission1));
+        orderBook.add(new CommissionRecorder<>(commission2));
+        orderBook.add(new CommissionRecorder<>(commission3));
         int index = 2;
         BigDecimal expected = BigDecimal.valueOf(1.5);
         BigDecimal result = orderBook.get(index).getPrice();
@@ -25,13 +25,13 @@ public class OrderBookTest {
 
     @Test
     public void testAddHighFirst(){
-        CommissionBook orderBook = new CommissionBook(CommissionSortMode.HighPriceFirst);
+        CommissionBook<SimpleCommission> orderBook = new CommissionBook<>(CommissionSortMode.HighPriceFirst);
         SimpleCommission commission1 = new SimpleCommission(1, BigDecimal.valueOf(1.1));
         SimpleCommission commission2 = new SimpleCommission(1, BigDecimal.valueOf(1.5));
         SimpleCommission commission3 = new SimpleCommission(1, BigDecimal.valueOf(1.2));
-        orderBook.add(new CommissionRecorder(commission1));
-        orderBook.add(new CommissionRecorder(commission2));
-        orderBook.add(new CommissionRecorder(commission3));
+        orderBook.add(new CommissionRecorder<>(commission1));
+        orderBook.add(new CommissionRecorder<>(commission2));
+        orderBook.add(new CommissionRecorder<>(commission3));
         int index = 2;
         BigDecimal expected = BigDecimal.valueOf(1.1);
         BigDecimal result = orderBook.get(index).getPrice();

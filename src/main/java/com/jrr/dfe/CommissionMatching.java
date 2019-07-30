@@ -12,14 +12,15 @@ public class CommissionMatching<T extends Commission> {
     // 卖盘
     private final CommissionBook<T> askBook = new CommissionBook<>(CommissionSortMode.LowPriceFirst);
 
-    // 成交处理
-    private TradeHandler<T> tradeHandler;
+    private DealHandler<T> dealHandler;
+
+    private CommissionDealMaker<T> dealMaker = new LimitPriceCommissionDealMaker<>();
 
     public CommissionMatching(){
     }
 
-    public CommissionMatching(TradeHandler<T> handler){
-        this.tradeHandler = handler;
+    public CommissionMatching(DealHandler<T> dealHandler){
+        this.dealHandler = dealHandler;
     }
 
     /**
@@ -28,7 +29,12 @@ public class CommissionMatching<T extends Commission> {
      */
     public void bid(T commission){
         final CommissionRecorder<T> commissionRecorder = new CommissionRecorder<>(commission);
-        trade(commissionRecorder, bidBook, askBook, new BidDealMaker<>(commissionRecorder));
+        this.getDefaultDealMaker().bid(commissionRecorder, bidBook, askBook, dealHandler);
+    }
+
+    public void bid(T commission, CommissionDealMaker<T> dealMaker){
+        final CommissionRecorder<T> commissionRecorder = new CommissionRecorder<>(commission);
+        dealMaker.bid(commissionRecorder, bidBook, askBook, dealHandler);
     }
 
     /**
@@ -37,34 +43,16 @@ public class CommissionMatching<T extends Commission> {
      */
     public void ask(T commission){
         final CommissionRecorder<T> commissionRecorder = new CommissionRecorder<>(commission);
-        trade(commissionRecorder, askBook, bidBook, new AskDealMaker<>(commissionRecorder));
+        this.getDefaultDealMaker().ask(commissionRecorder, bidBook, askBook, dealHandler);
     }
 
-    private void trade(CommissionRecorder<T> commissionRecorder,
-                       CommissionBook<T> own,
-                       CommissionBook<T> opponent,
-                       DealMaker<T> dealCondition) {
-        do {
-            if(opponent.isEmpty()){
-                own.add(commissionRecorder);
-                break;
-            }
-            CommissionRecorder<T> top1 = opponent.head();
-            if(!dealCondition.canDeal(top1)){
-                own.add(commissionRecorder);
-                break;
-            }
-            Deal<T> deal = dealCondition.makeDeal(top1);
-            if(tradeHandler != null){
-                tradeHandler.onDeal(deal);
-            }
-            if(top1.getCurrentAmount() == 0){
-                opponent.remove(top1);
-            }
-        } while (commissionRecorder.getCurrentAmount() > 0);
-        if(tradeHandler != null){
-            tradeHandler.commissionUpdated(this.bidBook, this.askBook);
-        }
+    public void ask(T commission, CommissionDealMaker<T> dealMaker){
+        final CommissionRecorder<T> commissionRecorder = new CommissionRecorder<>(commission);
+        dealMaker.ask(commissionRecorder, bidBook, askBook, dealHandler);
+    }
+
+    private CommissionDealMaker<T> getDefaultDealMaker(){
+        return dealMaker;
     }
 
     public CommissionBook<T> getBidBook() {

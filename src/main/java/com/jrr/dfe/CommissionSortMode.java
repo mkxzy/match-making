@@ -4,7 +4,7 @@ package com.jrr.dfe;
 /**
  * 委托顺序
  */
-public enum CommissionSortMode {
+enum CommissionSortMode {
 
     /**
      * 低价在前
