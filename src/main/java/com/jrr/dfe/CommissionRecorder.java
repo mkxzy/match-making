@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 
 /**
  * 委托成交记录器
+ *
+ * 记录单个委托成交情况
  */
 public class CommissionRecorder<T extends Commission> implements Commission {
 

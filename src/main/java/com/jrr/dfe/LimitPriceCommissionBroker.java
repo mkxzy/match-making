@@ -8,33 +8,36 @@ import java.math.BigDecimal;
  * 限价委托
  * @param <T>
  */
-public class LimitPriceCommissionDealMaker<T extends Commission> implements CommissionDealMaker<T>{
+public class LimitPriceCommissionBroker<T extends Commission> implements CommissionBroker<T> {
 
-    public LimitPriceCommissionDealMaker(){
+    private CommissionRecorder<T> cr;
+
+    public LimitPriceCommissionBroker(T commission){
+        this.cr = new CommissionRecorder<>(commission);
     }
 
     @Override
-    public void bid(CommissionRecorder<T> cr, CommissionBook<T> bidBook, CommissionBook<T> askBook, DealHandler<T> dealHandler) {
-        trade(cr, bidBook, askBook, new BidDealMaker<>(cr), dealHandler);
+    public void dealForBid(CommissionBook<T> bidBook, CommissionBook<T> askBook, DealHandler<T> dealHandler) {
+        this.deal(new BidDealMaker<>(cr), bidBook, askBook, dealHandler);
     }
 
     @Override
-    public void ask(CommissionRecorder<T> cr, CommissionBook<T> bidBook, CommissionBook<T> askBook, DealHandler<T> dealHandler) {
-        trade(cr, askBook, bidBook, new AskDealMaker<>(cr), dealHandler);
+    public void dealForAsk(CommissionBook<T> bidBook, CommissionBook<T> askBook, DealHandler<T> dealHandler) {
+        this.deal(new AskDealMaker<>(cr), askBook, bidBook, dealHandler);
     }
 
-    private void trade(CommissionRecorder<T> commissionRecorder,
-                       CommissionBook<T> own,
-                       CommissionBook<T> opponent,
-                       DealMaker<T> dealMaker, DealHandler<T> dealHandler) {
+    private void deal(DealMaker<T> dealMaker,
+                     CommissionBook<T> own,
+                     CommissionBook<T> opponent,
+                     DealHandler<T> dealHandler) {
         do {
             if(opponent.isEmpty()){
-                own.add(commissionRecorder);
+                own.add(cr);
                 break;
             }
             CommissionRecorder<T> top1 = opponent.head();
             if(!dealMaker.canDeal(top1)){
-                own.add(commissionRecorder);
+                own.add(cr);
                 break;
             }
             Deal<T> deal = dealMaker.makeDeal(top1);
@@ -44,7 +47,7 @@ public class LimitPriceCommissionDealMaker<T extends Commission> implements Comm
             if(top1.getCurrentAmount() == 0){
                 opponent.remove(top1);
             }
-        } while (commissionRecorder.getCurrentAmount() > 0);
+        } while (cr.getCurrentAmount() > 0);
     }
 
     /**
@@ -71,7 +74,7 @@ public class LimitPriceCommissionDealMaker<T extends Commission> implements Comm
 
         protected CommissionRecorder<T> own;
 
-        public AbstractDealMaker(CommissionRecorder<T> own) {
+        AbstractDealMaker(CommissionRecorder<T> own) {
             this.own = own;
         }
 
@@ -102,7 +105,7 @@ public class LimitPriceCommissionDealMaker<T extends Commission> implements Comm
      */
     private static class BidDealMaker<T extends Commission> extends AbstractDealMaker<T> {
 
-        public BidDealMaker(CommissionRecorder<T> own) {
+        BidDealMaker(CommissionRecorder<T> own) {
             super(own);
         }
 
@@ -124,7 +127,7 @@ public class LimitPriceCommissionDealMaker<T extends Commission> implements Comm
      */
     private static class AskDealMaker<T extends Commission> extends AbstractDealMaker<T> {
 
-        public AskDealMaker(CommissionRecorder<T> own) {
+        AskDealMaker(CommissionRecorder<T> own) {
             super(own);
         }
 

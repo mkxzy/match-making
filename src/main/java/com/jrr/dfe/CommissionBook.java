@@ -11,7 +11,7 @@ public class CommissionBook<T extends Commission> {
 
     private final List<CommissionRecorder<T>> list = new ArrayList<>();
 
-    private CommissionLocateStrategy<T> strategy;
+    private final CommissionLocateStrategy<T> strategy;
 
     private CommissionBook(final CommissionLocateStrategy<T> strategy){
         this.strategy = strategy;

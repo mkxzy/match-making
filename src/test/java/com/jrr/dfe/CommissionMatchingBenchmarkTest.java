@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 public class CommissionMatchingBenchmarkTest {
 
-    CommissionMatching<SimpleCommission> market = new CommissionMatching<>();
+    private CommissionManager<SimpleCommission> market = new CommissionManager<>();
 
     @Test
     public void testBidBenchmark(){
@@ -16,10 +16,11 @@ public class CommissionMatchingBenchmarkTest {
         int count = 1000000+1;
         for(int i = 0; i < count; i++){
             SimpleCommission commission = new SimpleCommission(String.valueOf(i),1, BigDecimal.ONE);
+            LimitPriceCommissionBroker<SimpleCommission> broker = new LimitPriceCommissionBroker<>(commission);
             if(i % 2 == 0){
-                market.bid(commission);
+                market.bid(broker);
             }else {
-                market.ask(commission);
+                market.ask(broker);
             }
         }
         stopWatch.stop();
