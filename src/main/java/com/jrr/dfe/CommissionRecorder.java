@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 
 
 /**
- * 委托成交记录器
- *
  * 记录单个委托成交情况
  */
 public class CommissionRecorder<T extends Commission> implements Commission {
@@ -46,7 +44,7 @@ public class CommissionRecorder<T extends Commission> implements Commission {
      * 当前数量减去相应数量（成交）
      * @param amount
      */
-    void subCurrentAmount(long amount){
+    public void subCurrentAmount(long amount){
         currentAmount = currentAmount - amount;
     }
 

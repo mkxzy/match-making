@@ -21,6 +21,10 @@ public class CommissionManager<T extends Commission> {
     public CommissionManager(){
     }
 
+    public CommissionManager(DealHandler<T> dealHandler){
+        this.dealHandler = dealHandler;
+    }
+
     /**
      * 买入委托
      * @param commissionBroker
