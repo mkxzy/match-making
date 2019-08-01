@@ -4,52 +4,52 @@ package com.iblotus.exchange;
 /**
  * 委托盘口
  *
- * 负责管理委托，委托排队
+ * 处理委托，维护委托队列
  */
-public class CommissionManager<T extends Commission> {
+public class CommissionManager {
 
     private final Object locker = new Object();
 
     // 买盘
-    private final CommissionBook<T> bidBook = CommissionBook.HighFirst();
+    private final CommissionBook<CommissionBroker> longBook = CommissionBook.HighFirst();
 
     // 卖盘
-    private final CommissionBook<T> askBook = CommissionBook.LowFirst();
+    private final CommissionBook<CommissionBroker> shortBook = CommissionBook.LowFirst();
 
-    private DealHandler<T> dealHandler;
+    private DealHandler dealHandler;
 
     public CommissionManager(){
     }
 
-    public CommissionManager(DealHandler<T> dealHandler){
+    public CommissionManager(DealHandler dealHandler){
         this.dealHandler = dealHandler;
     }
 
     /**
-     * 买入委托
+     * 提交委托
      * @param commissionBroker
      */
-    public void bid(CommissionBroker<T> commissionBroker){
+    public void submit(CommissionBroker commissionBroker){
         synchronized(locker) {
-            commissionBroker.dealForBid(bidBook, askBook, dealHandler);
+            if(commissionBroker.getDirection() == LongShort.Long){
+                commissionBroker.deal(longBook, shortBook, dealHandler);
+            }else if(commissionBroker.getDirection() == LongShort.Short){
+                commissionBroker.deal(shortBook, longBook, dealHandler);
+            }else {
+                throw new RuntimeException("Unsupported Direction");
+            }
         }
     }
 
-    /**
-     * 卖出委托
-     * @param commissionBroker
-     */
-    public void ask(CommissionBroker<T> commissionBroker){
-        synchronized (locker){
-            commissionBroker.dealForAsk(bidBook, askBook, dealHandler);
-        }
+    public void cancel(String brokerId){
+
     }
 
-    public CommissionBook<T> getBidBook() {
-        return bidBook;
+    public CommissionBook<CommissionBroker> getLongBook() {
+        return longBook;
     }
 
-    public CommissionBook<T> getAskBook() {
-        return askBook;
+    public CommissionBook<CommissionBroker> getShortBook() {
+        return shortBook;
     }
 }

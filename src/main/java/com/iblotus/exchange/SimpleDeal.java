@@ -7,21 +7,21 @@ import java.math.BigDecimal;
  * 成交实现类
  * @param <T>
  */
-public class SimpleDeal<T extends Commission> implements Deal<T> {
+class SimpleDeal implements Deal {
 
     private BigDecimal price;
 
     private long amount;
 
-    private CommissionRecorder<T> bid;
+    private CommissionBroker initiate;
 
-    private CommissionRecorder<T> ask;
+    private CommissionBroker passive;
 
-    public SimpleDeal(BigDecimal price, long amount, CommissionRecorder<T> bid, CommissionRecorder<T> ask) {
+    SimpleDeal(BigDecimal price, long amount, CommissionBroker initiate, CommissionBroker passive) {
         this.price = price;
         this.amount = amount;
-        this.bid = bid;
-        this.ask = ask;
+        this.initiate = initiate;
+        this.passive = passive;
     }
 
     @Override
@@ -35,12 +35,12 @@ public class SimpleDeal<T extends Commission> implements Deal<T> {
     }
 
     @Override
-    public CommissionRecorder<T> getBid() {
+    public CommissionBroker getInitiate() {
         return null;
     }
 
     @Override
-    public CommissionRecorder<T> getAsk() {
+    public CommissionBroker getPassive() {
         return null;
     }
 }

@@ -1,26 +1,54 @@
 package com.iblotus.exchange;
 
 
+import java.math.BigDecimal;
+
 /**
- * 委托模式
- * 负责处理委托成交的具体方式。确定成交价，成交数量，部分成交如何处理等等
+ * 委托代理接口
+ * 定义委托成交逻辑
  * @param <T>
  */
-public interface CommissionBroker<T extends Commission> {
+public interface CommissionBroker {
+
+    /**
+     * 代理Id
+     * @return
+     */
+    String getBrokerId();
 
     /**
      * 买入成交
-     * @param bidBook
-     * @param askBook
+     * @param own
+     * @param opponent
      * @param dealHandler
      */
-    void dealForBid(CommissionBook<T> bidBook, CommissionBook<T> askBook, DealHandler<T> dealHandler);
+    void deal(CommissionBook<CommissionBroker> own, CommissionBook<CommissionBroker> opponent, DealHandler dealHandler);
 
     /**
-     * 卖出成交
-     * @param bidBook
-     * @param askBook
-     * @param dealHandler
+     * 获取当前数量
+     * @return
      */
-    void dealForAsk(CommissionBook<T> bidBook, CommissionBook<T> askBook, DealHandler<T> dealHandler);
+    long getCurrentAmount();
+
+    /**
+     * 当前数量减去一定数量
+     */
+    void subCurrentAmount(long amount);
+
+    /**
+     * 数量
+     * @return
+     */
+    long getAmount();
+
+    /**
+     * 价格
+     * @return
+     */
+    BigDecimal getPrice();
+
+    /**
+     * 行情方向
+     */
+    LongShort getDirection();
 }

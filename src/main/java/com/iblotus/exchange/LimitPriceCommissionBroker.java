@@ -2,144 +2,113 @@ package com.iblotus.exchange;
 
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 
 /**
  * 限价委托
- * @param <T>
+ * @param
  */
-public class LimitPriceCommissionBroker<T extends Commission> implements CommissionBroker<T> {
+public class LimitPriceCommissionBroker implements CommissionBroker {
 
-    private CommissionRecorder<T> cr;
+    private final String brokerId;
 
-    public LimitPriceCommissionBroker(T commission){
-        this.cr = new CommissionRecorder<>(commission);
+    private long currentAmount;
+
+    private long amount;
+
+    private BigDecimal price;
+
+    private LongShort direction;
+
+    public LimitPriceCommissionBroker(long amount, BigDecimal price, LongShort direction){
+        this.currentAmount = amount;
+        this.brokerId = UUID.randomUUID().toString();
+        this.amount = amount;
+        this.price = price;
+        this.direction = direction;
     }
 
     @Override
-    public void dealForBid(CommissionBook<T> bidBook, CommissionBook<T> askBook, DealHandler<T> dealHandler) {
-        this.deal(new BidDealMaker<>(cr), bidBook, askBook, dealHandler);
-    }
-
-    @Override
-    public void dealForAsk(CommissionBook<T> bidBook, CommissionBook<T> askBook, DealHandler<T> dealHandler) {
-        this.deal(new AskDealMaker<>(cr), askBook, bidBook, dealHandler);
-    }
-
-    private void deal(DealMaker<T> dealMaker,
-                     CommissionBook<T> own,
-                     CommissionBook<T> opponent,
-                     DealHandler<T> dealHandler) {
+    public void deal(CommissionBook<CommissionBroker> own,
+                     CommissionBook<CommissionBroker> opponent,
+                     DealHandler dealHandler) {
         do {
             if(opponent.isEmpty()){
-                own.add(cr);
+                own.add(this);
                 break;
             }
-            CommissionRecorder<T> top1 = opponent.head();
-            if(!dealMaker.canDeal(top1)){
-                own.add(cr);
+            CommissionBroker passive = opponent.top();
+            if(!this.canDeal(passive)){
+                own.add(this);
                 break;
             }
-            Deal<T> deal = dealMaker.makeDeal(top1);
+            Deal deal = this.makeDeal(passive);
             if(dealHandler != null){
                 dealHandler.onDeal(deal);
             }
-            if(top1.getCurrentAmount() == 0){
-                opponent.remove(top1);
+            if(passive.getCurrentAmount() == 0){
+                opponent.remove(passive.getBrokerId());
             }
-        } while (cr.getCurrentAmount() > 0);
+        } while (this.getCurrentAmount() > 0);
+    }
+
+    private boolean canDeal(CommissionBroker passive) {
+        if(this.getDirection() == LongShort.Long){
+            return this.getPrice().compareTo(passive.getPrice()) >= 0;
+        }else{
+            return this.getPrice().compareTo(passive.getPrice()) <= 0;
+        }
+    }
+
+    private Deal makeDeal(CommissionBroker passive) {
+        long dealAmount;
+        if(this.getCurrentAmount() < passive.getCurrentAmount()){
+            dealAmount = this.getCurrentAmount();
+        }else{
+            dealAmount = passive.getCurrentAmount();
+        }
+
+        BigDecimal dealPrice = passive.getPrice();
+        passive.subCurrentAmount(dealAmount);
+        this.subCurrentAmount(dealAmount);
+        SimpleDeal deal = new SimpleDeal(dealPrice, dealAmount, this, passive);
+        return deal;
+    }
+
+    @Override
+    public long getAmount() {
+        return this.amount;
+    }
+
+    @Override
+    public BigDecimal getPrice() {
+        return this.price;
+    }
+
+    @Override
+    public LongShort getDirection() {
+        return this.direction;
     }
 
     /**
-     * 委托成交处理
+     * 获取当前数量
+     * @return
      */
-    private interface DealMaker<T extends Commission> {
-
-        /**
-         * 判断是否能够撮合
-         * @param opponentMission
-         * @return
-         */
-        boolean canDeal(CommissionRecorder<T> opponentMission);
-
-        /**
-         * 撮合
-         * @param opponentMission
-         * @return
-         */
-        Deal<T> makeDeal(CommissionRecorder<T> opponentMission);
-    }
-
-    private static abstract class AbstractDealMaker<T extends Commission> implements DealMaker<T> {
-
-        protected CommissionRecorder<T> own;
-
-        AbstractDealMaker(CommissionRecorder<T> own) {
-            this.own = own;
-        }
-
-        public abstract boolean canDeal(CommissionRecorder<T> opponentMission);
-
-        @Override
-        public final Deal<T> makeDeal(CommissionRecorder<T> opponentMission) {
-            long dealAmount;
-            if(own.getCurrentAmount() < opponentMission.getCurrentAmount()){
-                dealAmount = own.getCurrentAmount();
-            }else{
-                dealAmount = opponentMission.getCurrentAmount();
-            }
-
-            BigDecimal dealPrice = opponentMission.getPrice();
-            opponentMission.subCurrentAmount(dealAmount);
-            own.subCurrentAmount(dealAmount);
-//            System.out.printf("成交数量%d\n", dealAmount);
-            return this.createDeal(dealPrice, dealAmount, opponentMission);
-        }
-
-        protected abstract Deal<T> createDeal(BigDecimal dealPrice, long dealAmount, CommissionRecorder<T> opponentMission);
+    public long getCurrentAmount() {
+        return currentAmount;
     }
 
     /**
-     * 买成交
-     * @param <T>
+     * 当前数量减去相应数量（成交）
+     * @param amount
      */
-    private static class BidDealMaker<T extends Commission> extends AbstractDealMaker<T> {
-
-        BidDealMaker(CommissionRecorder<T> own) {
-            super(own);
-        }
-
-        @Override
-        public boolean canDeal(CommissionRecorder<T> opponentMission) {
-            return own.getPrice().compareTo(opponentMission.getPrice()) >= 0;
-        }
-
-        @Override
-        protected Deal<T> createDeal(BigDecimal dealPrice, long dealAmount, CommissionRecorder<T> opponentMission) {
-            SimpleDeal<T> deal = new SimpleDeal<>(dealPrice, dealAmount, own, opponentMission);
-            return deal;
-        }
+    public void subCurrentAmount(long amount){
+        currentAmount = currentAmount - amount;
     }
 
-    /**
-     * 卖成交
-     * @param <T>
-     */
-    private static class AskDealMaker<T extends Commission> extends AbstractDealMaker<T> {
-
-        AskDealMaker(CommissionRecorder<T> own) {
-            super(own);
-        }
-
-        @Override
-        public boolean canDeal(CommissionRecorder<T> opponentMission) {
-            return own.getPrice().compareTo(opponentMission.getPrice()) <= 0;
-        }
-
-        @Override
-        protected Deal<T> createDeal(BigDecimal dealPrice, long dealAmount, CommissionRecorder<T> opponentMission) {
-            SimpleDeal<T> deal = new SimpleDeal<>(dealPrice, dealAmount, opponentMission, own);
-            return deal;
-        }
+    @Override
+    public String getBrokerId() {
+        return this.brokerId;
     }
 }

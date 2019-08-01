@@ -1,27 +1,31 @@
 package com.iblotus.exchange;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
  * 委托挂单
  */
-public class CommissionBook<T extends Commission> {
+public class CommissionBook<T extends CommissionBroker> {
 
-    private final List<CommissionRecorder<T>> list = new ArrayList<>();
+    private final List<T> list = new ArrayList<>();
 
     private final CommissionLocateStrategy<T> strategy;
+
+    private Map<String, T> brokerMap = new HashMap<>();
 
     private CommissionBook(final CommissionLocateStrategy<T> strategy){
         this.strategy = strategy;
     }
 
-    static <T extends Commission> CommissionBook<T> HighFirst(){
+    static <T extends CommissionBroker> CommissionBook<T> HighFirst(){
         return new CommissionBook<>(new HighPriceFirstCommissionStrategy<T>());
     }
 
-    static <T extends Commission> CommissionBook<T> LowFirst(){
+    static <T extends CommissionBroker> CommissionBook<T> LowFirst(){
         return new CommissionBook<>(new LowPriceFirstCommissionStategy<T>());
     }
 
@@ -29,28 +33,43 @@ public class CommissionBook<T extends Commission> {
      * 添加到订单列表（排序）
      * @param c
      */
-    public int add(CommissionRecorder<T> c){
+    public void add(T c){
         int index = strategy.locate(c, this.list);
         if(index >= 0){
             list.add(index, c);
-            return index;
         }else{
             list.add(c);
-            return list.size() - 1;
         }
-    }
-
-    public void remove(CommissionRecorder<T> c){
-        list.remove(c);
+        brokerMap.put(c.getBrokerId(), c);
     }
 
     /**
-     * 根据索引获取订单项
-     * @param index
+     * 移除委托
+     * @param brokerId
+     */
+    public void remove(String brokerId){
+        T broker = brokerMap.get(brokerId);
+        if(broker != null){
+            brokerMap.remove(brokerId);
+            list.remove(broker);
+        }
+    }
+
+    /**
+     * 清空委托
+     */
+    public void clear(){
+        brokerMap.clear();
+        list.clear();
+    }
+
+    /**
+     * 查找委托
+     * @param brokerId
      * @return
      */
-    public CommissionRecorder<T> get(int index){
-        return list.get(index);
+    public T find(String brokerId){
+        return brokerMap.get(brokerId);
     }
 
     public boolean isEmpty(){
@@ -61,7 +80,7 @@ public class CommissionBook<T extends Commission> {
         return list.size();
     }
 
-    public CommissionRecorder<T> head(){
+    public T top(){
         if(this.isEmpty()){
             throw new RuntimeException("OrderBook is empty");
         }
@@ -71,7 +90,7 @@ public class CommissionBook<T extends Commission> {
     /**
      * 委托定位策略
      */
-    private interface CommissionLocateStrategy<T extends Commission> {
+    private interface CommissionLocateStrategy<T extends CommissionBroker> {
 
         /**
          * 查找任务的待插入索引
@@ -79,16 +98,16 @@ public class CommissionBook<T extends Commission> {
          * @param newCommition
          * @return
          */
-        int locate(CommissionRecorder<T> newCommition, List<CommissionRecorder<T>> list);
+        int locate(T newCommition, List<T> list);
     }
 
     /**
      * 低价优先（二分查找法高性能）
      */
-    private static class LowPriceFirstCommissionStategy<T extends Commission> implements CommissionLocateStrategy<T> {
+    private static class LowPriceFirstCommissionStategy<T extends CommissionBroker> implements CommissionLocateStrategy<T> {
 
         @Override
-        public int locate(CommissionRecorder<T> newCommition, List<CommissionRecorder<T>> list) {
+        public int locate(T newCommition, List<T> list) {
             int mid;
             int start = 0;
             int end = list.size() - 1;
@@ -113,24 +132,16 @@ public class CommissionBook<T extends Commission> {
                 }
             }
             return -1;
-//            for(int i = 0; i < list.size(); i++){
-//                CommissionRecorder<T> item = list.get(i);
-//                if(newCommition.getPrice().compareTo(item.getPrice()) <0){
-//                    index = i;
-//                    break;
-//                }
-//            }
-//            return index;
         }
     }
 
     /**
      * 高价优先（二分查找法高性能）
      */
-    private static class HighPriceFirstCommissionStrategy<T extends Commission> implements CommissionLocateStrategy<T> {
+    private static class HighPriceFirstCommissionStrategy<T extends CommissionBroker> implements CommissionLocateStrategy<T> {
 
         @Override
-        public int locate(CommissionRecorder<T> newCommition, List<CommissionRecorder<T>> list) {
+        public int locate(T newCommition, List<T> list) {
             int mid;
             int start = 0;
             int end = list.size() - 1;
