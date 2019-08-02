@@ -6,15 +6,8 @@ import java.math.BigDecimal;
 /**
  * 委托代理接口
  * 定义委托成交逻辑
- * @param <T>
  */
-public interface CommissionBroker {
-
-    /**
-     * 代理Id
-     * @return
-     */
-    String getBrokerId();
+public interface Commission {
 
     /**
      * 买入成交
@@ -22,21 +15,21 @@ public interface CommissionBroker {
      * @param opponent
      * @param dealHandler
      */
-    void deal(CommissionBook<CommissionBroker> own, CommissionBook<CommissionBroker> opponent, DealHandler dealHandler);
-
-    /**
-     * 获取当前数量
-     * @return
-     */
-    long getCurrentAmount();
+    void deal(CommissionBook<Commission> own, CommissionBook<Commission> opponent, DealHandler dealHandler);
 
     /**
      * 当前数量减去一定数量
      */
-    void subCurrentAmount(long amount);
+    void substractAmount(long amount);
 
     /**
-     * 数量
+     * 代理Id
+     * @return
+     */
+    String getId();
+
+    /**
+     * 获取当前数量
      * @return
      */
     long getAmount();

@@ -7,7 +7,7 @@ package com.iblotus.exchange;
 public interface DealHandler {
 
     /**
-     * 成交回调
+     * 回调
      * @param deal
      */
     void onDeal(Deal deal);

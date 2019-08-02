@@ -13,11 +13,11 @@ class SimpleDeal implements Deal {
 
     private long amount;
 
-    private CommissionBroker initiate;
+    private Commission initiate;
 
-    private CommissionBroker passive;
+    private Commission passive;
 
-    SimpleDeal(BigDecimal price, long amount, CommissionBroker initiate, CommissionBroker passive) {
+    SimpleDeal(BigDecimal price, long amount, Commission initiate, Commission passive) {
         this.price = price;
         this.amount = amount;
         this.initiate = initiate;
@@ -35,12 +35,12 @@ class SimpleDeal implements Deal {
     }
 
     @Override
-    public CommissionBroker getInitiate() {
+    public Commission getInitiate() {
         return null;
     }
 
     @Override
-    public CommissionBroker getPassive() {
+    public Commission getPassive() {
         return null;
     }
 }

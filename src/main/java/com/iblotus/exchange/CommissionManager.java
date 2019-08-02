@@ -1,8 +1,12 @@
 package com.iblotus.exchange;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
+
 /**
- * 委托盘口
+ * 委托管理
  *
  * 处理委托，维护委托队列
  */
@@ -11,45 +15,89 @@ public class CommissionManager {
     private final Object locker = new Object();
 
     // 买盘
-    private final CommissionBook<CommissionBroker> longBook = CommissionBook.HighFirst();
+    private final CommissionBook<Commission> longBook = CommissionBook.HighFirst();
 
     // 卖盘
-    private final CommissionBook<CommissionBroker> shortBook = CommissionBook.LowFirst();
+    private final CommissionBook<Commission> shortBook = CommissionBook.LowFirst();
 
+    // 委托归属
+    private Map<String, CommissionBook<Commission>> commissionBelong = new HashMap<>();
+
+    // 成交处理
     private DealHandler dealHandler;
 
     public CommissionManager(){
+        CommissionBookListener<Commission> listener = new CommissionBookListener<Commission>() {
+            @Override
+            public void onAdd(CommissionBook<Commission> sender, Commission commission) {
+                commissionBelong.put(commission.getId(), sender);
+            }
+
+            @Override
+            public void onRemove(CommissionBook<Commission> sender, Commission commission) {
+                commissionBelong.remove(commission.getId());
+            }
+        };
+        longBook.addListener(listener);
+        shortBook.addListener(listener);
     }
 
     public CommissionManager(DealHandler dealHandler){
+        this();
         this.dealHandler = dealHandler;
     }
 
     /**
      * 提交委托
-     * @param commissionBroker
+     * @param commission
      */
-    public void submit(CommissionBroker commissionBroker){
+    public void submit(Commission commission){
+        if(commissionBelong.containsKey(commission.getId())){
+            throw new RuntimeException("委托已存在");
+        }
         synchronized(locker) {
-            if(commissionBroker.getDirection() == LongShort.Long){
-                commissionBroker.deal(longBook, shortBook, dealHandler);
-            }else if(commissionBroker.getDirection() == LongShort.Short){
-                commissionBroker.deal(shortBook, longBook, dealHandler);
+            if(commission.getDirection() == LongShort.Long){
+                commission.deal(longBook, shortBook, dealHandler);
+            }else if(commission.getDirection() == LongShort.Short){
+                commission.deal(shortBook, longBook, dealHandler);
             }else {
                 throw new RuntimeException("Unsupported Direction");
             }
         }
     }
 
-    public void cancel(String brokerId){
-
+    /**
+     * 撤销委托
+     * @param id
+     */
+    public void cancel(String id){
+        synchronized (locker){
+            CommissionBook<Commission> commissionBook = commissionBelong.get(id);
+            if(commissionBook != null){
+                commissionBelong.remove(id);
+                Commission commission = commissionBook.find(id);
+                if(commission != null){
+                    commissionBook.remove(commission);
+                    return;
+                }
+            }
+            throw new RuntimeException("撤单失败");
+        }
     }
 
-    public CommissionBook<CommissionBroker> getLongBook() {
+    /**
+     * 买盘
+     * @return
+     */
+    public CommissionBook<Commission> getLongBook() {
         return longBook;
     }
 
-    public CommissionBook<CommissionBroker> getShortBook() {
+    /**
+     * 卖盘
+     * @return
+     */
+    public CommissionBook<Commission> getShortBook() {
         return shortBook;
     }
 }

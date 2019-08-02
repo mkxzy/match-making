@@ -5,28 +5,33 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
+
+/**
+ * 性能测试
+ */
 public class CommissionMatchingBenchmarkTest {
 
-//    private CommissionManager<SimpleCommission> market = new CommissionManager<>();
-//
-//    @Test
-//    public void testBidBenchmark(){
-//        StopWatch stopWatch = new StopWatch();
-//        stopWatch.start();
-//        int count = 1000000+1;
-//        for(int i = 0; i < count; i++){
-//            SimpleCommission commission = new SimpleCommission(String.valueOf(i),1, BigDecimal.ONE);
-//            LimitPriceCommissionBroker<SimpleCommission> broker = new LimitPriceCommissionBroker<>(commission);
-//            if(i % 2 == 0){
-//                market.submit(broker);
-//            }else {
-//                market.ask(broker);
-//            }
-//        }
-//        stopWatch.stop();
-//        System.out.println(market.getLongBook().size());
-//        System.out.println(market.getShortBook().size());
-//        System.out.println(stopWatch.getTime());
-//        System.out.println("TPS: " + (count * 1000 / stopWatch.getTime()));
-//    }
+    private CommissionManager market = new CommissionManager();
+
+    @Test
+    public void testBidBenchmark(){
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        long count = 100000000;
+        for(int i = 0; i < count; i++){
+            LongShort direction;
+            if(i % 2 == 0){
+                direction = LongShort.Long;
+            }else {
+                direction = LongShort.Short;
+            }
+            LimitPriceCommission commission = new LimitPriceCommission(String.valueOf(i),1, BigDecimal.ONE, direction);
+            market.submit(commission);
+        }
+        stopWatch.stop();
+        System.out.println(market.getLongBook().size());
+        System.out.println(market.getShortBook().size());
+        System.out.println(stopWatch.getTime());
+        System.out.println("TPS: " + (count * 1000 / stopWatch.getTime()));
+    }
 }

@@ -22,14 +22,14 @@ public interface Deal {
     long getAmount();
 
     /**
-     * 买方
+     * 主动方
      * @return
      */
-    CommissionBroker getInitiate();
+    Commission getInitiate();
 
     /**
-     * 卖方
+     * 被动方
      * @return
      */
-    CommissionBroker getPassive();
+    Commission getPassive();
 }

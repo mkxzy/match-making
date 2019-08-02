@@ -1,33 +1,35 @@
 package com.iblotus.exchange;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
  * 委托挂单
  */
-public class CommissionBook<T extends CommissionBroker> {
+public class CommissionBook<T extends Commission> {
 
     private final List<T> list = new ArrayList<>();
 
     private final CommissionLocateStrategy<T> strategy;
 
-    private Map<String, T> brokerMap = new HashMap<>();
+    private final List<CommissionBookListener<T>> listeners = new ArrayList<>(2);
 
     private CommissionBook(final CommissionLocateStrategy<T> strategy){
         this.strategy = strategy;
     }
 
-    static <T extends CommissionBroker> CommissionBook<T> HighFirst(){
+    static <T extends Commission> CommissionBook<T> HighFirst(){
         return new CommissionBook<>(new HighPriceFirstCommissionStrategy<T>());
     }
 
-    static <T extends CommissionBroker> CommissionBook<T> LowFirst(){
+    static <T extends Commission> CommissionBook<T> LowFirst(){
         return new CommissionBook<>(new LowPriceFirstCommissionStategy<T>());
     }
+
+    public void addListener(CommissionBookListener<T> listener){
+        this.listeners.add(listener);
+    }
+
 
     /**
      * 添加到订单列表（排序）
@@ -40,36 +42,38 @@ public class CommissionBook<T extends CommissionBroker> {
         }else{
             list.add(c);
         }
-        brokerMap.put(c.getBrokerId(), c);
-    }
-
-    /**
-     * 移除委托
-     * @param brokerId
-     */
-    public void remove(String brokerId){
-        T broker = brokerMap.get(brokerId);
-        if(broker != null){
-            brokerMap.remove(brokerId);
-            list.remove(broker);
+        for (CommissionBookListener<T> listener: listeners) {
+            listener.onAdd(this, c);
         }
     }
 
     /**
-     * 清空委托
+     * 根据ID查找委托
+     * @param id
+     * @return
      */
-    public void clear(){
-        brokerMap.clear();
-        list.clear();
+    public T find(String id){
+        for(T t: this.list){
+            if(t.getId().equals(id)){
+                return t;
+            }
+        }
+        return null;
     }
 
     /**
-     * 查找委托
-     * @param brokerId
-     * @return
+     * 移除委托
+     * @param c
      */
-    public T find(String brokerId){
-        return brokerMap.get(brokerId);
+    public void remove(T c){
+        list.remove(c);
+        for (CommissionBookListener<T> listener: listeners) {
+            listener.onRemove(this, c);
+        }
+    }
+
+    public T get(int index){
+        return list.get(index);
     }
 
     public boolean isEmpty(){
@@ -90,7 +94,7 @@ public class CommissionBook<T extends CommissionBroker> {
     /**
      * 委托定位策略
      */
-    private interface CommissionLocateStrategy<T extends CommissionBroker> {
+    private interface CommissionLocateStrategy<T extends Commission> {
 
         /**
          * 查找任务的待插入索引
@@ -104,7 +108,7 @@ public class CommissionBook<T extends CommissionBroker> {
     /**
      * 低价优先（二分查找法高性能）
      */
-    private static class LowPriceFirstCommissionStategy<T extends CommissionBroker> implements CommissionLocateStrategy<T> {
+    private static class LowPriceFirstCommissionStategy<T extends Commission> implements CommissionLocateStrategy<T> {
 
         @Override
         public int locate(T newCommition, List<T> list) {
@@ -138,7 +142,7 @@ public class CommissionBook<T extends CommissionBroker> {
     /**
      * 高价优先（二分查找法高性能）
      */
-    private static class HighPriceFirstCommissionStrategy<T extends CommissionBroker> implements CommissionLocateStrategy<T> {
+    private static class HighPriceFirstCommissionStrategy<T extends Commission> implements CommissionLocateStrategy<T> {
 
         @Override
         public int locate(T newCommition, List<T> list) {

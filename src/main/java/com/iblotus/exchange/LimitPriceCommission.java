@@ -2,43 +2,39 @@ package com.iblotus.exchange;
 
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 
 /**
  * 限价委托
  * @param
  */
-public class LimitPriceCommissionBroker implements CommissionBroker {
+public class LimitPriceCommission implements Commission {
 
-    private final String brokerId;
+    private final String id;
+
+    private final BigDecimal price;
+
+    private final LongShort direction;
 
     private long currentAmount;
 
-    private long amount;
-
-    private BigDecimal price;
-
-    private LongShort direction;
-
-    public LimitPriceCommissionBroker(long amount, BigDecimal price, LongShort direction){
+    public LimitPriceCommission(String id, long amount, BigDecimal price, LongShort direction){
         this.currentAmount = amount;
-        this.brokerId = UUID.randomUUID().toString();
-        this.amount = amount;
         this.price = price;
         this.direction = direction;
+        this.id = id;
     }
 
     @Override
-    public void deal(CommissionBook<CommissionBroker> own,
-                     CommissionBook<CommissionBroker> opponent,
+    public void deal(CommissionBook<Commission> own,
+                     CommissionBook<Commission> opponent,
                      DealHandler dealHandler) {
         do {
             if(opponent.isEmpty()){
                 own.add(this);
                 break;
             }
-            CommissionBroker passive = opponent.top();
+            Commission passive = opponent.top();
             if(!this.canDeal(passive)){
                 own.add(this);
                 break;
@@ -47,13 +43,13 @@ public class LimitPriceCommissionBroker implements CommissionBroker {
             if(dealHandler != null){
                 dealHandler.onDeal(deal);
             }
-            if(passive.getCurrentAmount() == 0){
-                opponent.remove(passive.getBrokerId());
+            if(passive.getAmount() == 0){
+                opponent.remove(passive);
             }
-        } while (this.getCurrentAmount() > 0);
+        } while (this.getAmount() > 0);
     }
 
-    private boolean canDeal(CommissionBroker passive) {
+    private boolean canDeal(Commission passive) {
         if(this.getDirection() == LongShort.Long){
             return this.getPrice().compareTo(passive.getPrice()) >= 0;
         }else{
@@ -61,24 +57,19 @@ public class LimitPriceCommissionBroker implements CommissionBroker {
         }
     }
 
-    private Deal makeDeal(CommissionBroker passive) {
+    private Deal makeDeal(Commission passive) {
         long dealAmount;
-        if(this.getCurrentAmount() < passive.getCurrentAmount()){
-            dealAmount = this.getCurrentAmount();
+        if(this.getAmount() < passive.getAmount()){
+            dealAmount = this.getAmount();
         }else{
-            dealAmount = passive.getCurrentAmount();
+            dealAmount = passive.getAmount();
         }
 
         BigDecimal dealPrice = passive.getPrice();
-        passive.subCurrentAmount(dealAmount);
-        this.subCurrentAmount(dealAmount);
+        passive.substractAmount(dealAmount);
+        this.substractAmount(dealAmount);
         SimpleDeal deal = new SimpleDeal(dealPrice, dealAmount, this, passive);
         return deal;
-    }
-
-    @Override
-    public long getAmount() {
-        return this.amount;
     }
 
     @Override
@@ -95,7 +86,7 @@ public class LimitPriceCommissionBroker implements CommissionBroker {
      * 获取当前数量
      * @return
      */
-    public long getCurrentAmount() {
+    public long getAmount() {
         return currentAmount;
     }
 
@@ -103,12 +94,12 @@ public class LimitPriceCommissionBroker implements CommissionBroker {
      * 当前数量减去相应数量（成交）
      * @param amount
      */
-    public void subCurrentAmount(long amount){
+    public void substractAmount(long amount){
         currentAmount = currentAmount - amount;
     }
 
     @Override
-    public String getBrokerId() {
-        return this.brokerId;
+    public String getId() {
+        return this.id;
     }
 }

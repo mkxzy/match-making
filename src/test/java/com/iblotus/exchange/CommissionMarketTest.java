@@ -14,12 +14,12 @@ public class CommissionMarketTest {
 //        SimpleCommission commission3 = new SimpleCommission("3",1, BigDecimal.valueOf(1.2));
 //
 //        CommissionManager<SimpleCommission> market = new CommissionManager<>();
-//        market.ask(new LimitPriceCommissionBroker<>(commission1));
-//        market.ask(new LimitPriceCommissionBroker<>(commission2));
-//        market.ask(new LimitPriceCommissionBroker<>(commission3));
+//        market.ask(new LimitPriceCommission<>(commission1));
+//        market.ask(new LimitPriceCommission<>(commission2));
+//        market.ask(new LimitPriceCommission<>(commission3));
 //
 //        SimpleCommission bidCommission = new SimpleCommission("4",2, BigDecimal.valueOf(1.1));
-//        market.submit(new LimitPriceCommissionBroker<>(bidCommission));
+//        market.submit(new LimitPriceCommission<>(bidCommission));
 //        Assert.assertEquals(1, market.getLongBook().size());
 //        Assert.assertEquals(2, market.getShortBook().size());
 //    }
@@ -31,12 +31,12 @@ public class CommissionMarketTest {
 //        SimpleCommission commission3 = new SimpleCommission("3",1, BigDecimal.valueOf(1.2));
 //
 //        CommissionManager<SimpleCommission> market = new CommissionManager<>();
-//        market.ask(new LimitPriceCommissionBroker<>(commission1));
-//        market.ask(new LimitPriceCommissionBroker<>(commission2));
-//        market.ask(new LimitPriceCommissionBroker<>(commission3));
+//        market.ask(new LimitPriceCommission<>(commission1));
+//        market.ask(new LimitPriceCommission<>(commission2));
+//        market.ask(new LimitPriceCommission<>(commission3));
 //
 //        SimpleCommission bidCommission = new SimpleCommission("4",2, BigDecimal.valueOf(1.2));
-//        market.submit(new LimitPriceCommissionBroker<>(bidCommission));
+//        market.submit(new LimitPriceCommission<>(bidCommission));
 //        Assert.assertEquals(0, market.getLongBook().size());
 //        Assert.assertEquals(1, market.getShortBook().size());
 //    }
@@ -48,12 +48,12 @@ public class CommissionMarketTest {
 //        SimpleCommission commission3 = new SimpleCommission("3",1, BigDecimal.valueOf(1.2));
 //
 //        CommissionManager<SimpleCommission> market = new CommissionManager<>();
-//        market.submit(new LimitPriceCommissionBroker<>(commission1));
-//        market.submit(new LimitPriceCommissionBroker<>(commission2));
-//        market.submit(new LimitPriceCommissionBroker<>(commission3));
+//        market.submit(new LimitPriceCommission<>(commission1));
+//        market.submit(new LimitPriceCommission<>(commission2));
+//        market.submit(new LimitPriceCommission<>(commission3));
 //
 //        SimpleCommission bidCommission = new SimpleCommission("4",2, BigDecimal.valueOf(1.0));
-//        market.ask(new LimitPriceCommissionBroker<>(bidCommission));
+//        market.ask(new LimitPriceCommission<>(bidCommission));
 //        Assert.assertEquals(1, market.getLongBook().size());
 //        Assert.assertEquals(0, market.getShortBook().size());
 //    }
