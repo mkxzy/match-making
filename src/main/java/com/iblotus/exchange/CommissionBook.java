@@ -30,24 +30,6 @@ public class CommissionBook implements OrderedList<Commission> {
         this.listeners.add(listener);
     }
 
-
-    /**
-     * 添加到订单列表（排序）
-     * @param c
-     */
-    @Override
-    public void add(Commission c){
-        int index = strategy.locate(c, this.list);
-        if(index >= 0){
-            list.add(index, c);
-        }else{
-            list.add(c);
-        }
-        for (CommissionBookListener listener: listeners) {
-            listener.onAdd(this, c);
-        }
-    }
-
     /**
      * 根据ID查找委托
      * @param id
@@ -60,6 +42,26 @@ public class CommissionBook implements OrderedList<Commission> {
             }
         }
         return null;
+    }
+
+
+    /**
+     * 添加到订单列表（排序）
+     * @param c
+     */
+    @Override
+    public int add(Commission c){
+        int index = strategy.locate(c, this.list);
+        if(index >= 0){
+            list.add(index, c);
+        }else{
+            list.add(c);
+            index = list.size() - 1;
+        }
+        for (CommissionBookListener listener: listeners) {
+            listener.onAdd(this, c);
+        }
+        return index;
     }
 
     /**
@@ -89,7 +91,6 @@ public class CommissionBook implements OrderedList<Commission> {
         return list.size();
     }
 
-    @Override
     public Commission top(){
         if(this.isEmpty()){
             throw new RuntimeException("OrderBook is empty");

@@ -2,7 +2,7 @@ package com.iblotus.exchange;
 
 
 /**
- * 多空
+ * 多空枚举
  */
 public enum LongShort {
     /**
