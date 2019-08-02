@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 /**
  * 成交抽象类
  */
-public interface Deal {
+public interface Deal<T extends Commission> {
 
     /**
      * 成交价
@@ -25,11 +25,11 @@ public interface Deal {
      * 主动方
      * @return
      */
-    Commission getInitiate();
+    T getInitiate();
 
     /**
      * 被动方
      * @return
      */
-    Commission getPassive();
+    T getPassive();
 }

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
  * 成交实现类
  * @param <T>
  */
-class SimpleDeal implements Deal {
+class SimpleCommissionDeal implements Deal<Commission> {
 
     private BigDecimal price;
 
@@ -17,7 +17,7 @@ class SimpleDeal implements Deal {
 
     private Commission passive;
 
-    SimpleDeal(BigDecimal price, long amount, Commission initiate, Commission passive) {
+    SimpleCommissionDeal(BigDecimal price, long amount, Commission initiate, Commission passive) {
         this.price = price;
         this.amount = amount;
         this.initiate = initiate;

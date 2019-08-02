@@ -24,7 +24,7 @@ public class CommissionManager {
     private Map<String, CommissionBook> commissionBelong = new HashMap<>();
 
     // 成交处理
-    private DealHandler dealHandler;
+    private CommissionDealHandler dealHandler;
 
     public CommissionManager(){
         CommissionBookListener listener = new CommissionBookListener() {
@@ -42,7 +42,7 @@ public class CommissionManager {
         shortBook.addListener(listener);
     }
 
-    public CommissionManager(DealHandler dealHandler){
+    public CommissionManager(CommissionDealHandler dealHandler){
         this();
         this.dealHandler = dealHandler;
     }
@@ -57,11 +57,11 @@ public class CommissionManager {
         }
         synchronized(locker) {
             if(commission.getDirection() == LongShort.Long){
-                commission.deal(longBook, shortBook, dealHandler);
+                commission.dealForLong(longBook, shortBook, dealHandler);
             }else if(commission.getDirection() == LongShort.Short){
-                commission.deal(shortBook, longBook, dealHandler);
+                commission.dealForShort(longBook, shortBook, dealHandler);
             }else {
-                throw new RuntimeException("Unsupported Direction");
+                throw new RuntimeException("Direction Invalid");
             }
         }
     }

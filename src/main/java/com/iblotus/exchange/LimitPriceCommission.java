@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  * 限价委托
  * @param
  */
-public class LimitPriceCommission implements Commission {
+public class LimitPriceCommission extends AbstractCommission {
 
     private final String id;
 
@@ -26,9 +26,9 @@ public class LimitPriceCommission implements Commission {
     }
 
     @Override
-    public void deal(CommissionBook own,
+    protected void deal(CommissionBook own,
                      CommissionBook opponent,
-                     DealHandler dealHandler) {
+                     CommissionDealHandler dealHandler) {
         do {
             if(opponent.isEmpty()){
                 own.add(this);
@@ -39,7 +39,7 @@ public class LimitPriceCommission implements Commission {
                 own.add(this);
                 break;
             }
-            Deal deal = this.makeDeal(passive);
+            Deal<Commission> deal = this.makeDeal(passive);
             if(dealHandler != null){
                 dealHandler.onDeal(deal);
             }
@@ -57,7 +57,7 @@ public class LimitPriceCommission implements Commission {
         }
     }
 
-    private Deal makeDeal(Commission passive) {
+    private Deal<Commission> makeDeal(Commission passive) {
         long dealAmount;
         if(this.getAmount() < passive.getAmount()){
             dealAmount = this.getAmount();
@@ -68,7 +68,7 @@ public class LimitPriceCommission implements Commission {
         BigDecimal dealPrice = passive.getPrice();
         passive.substractAmount(dealAmount);
         this.substractAmount(dealAmount);
-        SimpleDeal deal = new SimpleDeal(dealPrice, dealAmount, this, passive);
+        SimpleCommissionDeal deal = new SimpleCommissionDeal(dealPrice, dealAmount, this, passive);
         return deal;
     }
 
