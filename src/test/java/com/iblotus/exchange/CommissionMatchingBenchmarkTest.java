@@ -1,6 +1,7 @@
 package com.iblotus.exchange;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -13,11 +14,12 @@ public class CommissionMatchingBenchmarkTest {
 
     private CommissionManager market = new CommissionManager();
 
+    @Ignore
     @Test
     public void testBidBenchmark(){
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        long count = 100000000;
+        long count = 10000000;
         for(int i = 0; i < count; i++){
             LongShort direction;
             if(i % 2 == 0){

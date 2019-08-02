@@ -15,26 +15,26 @@ public class CommissionManager {
     private final Object locker = new Object();
 
     // 买盘
-    private final CommissionBook<Commission> longBook = CommissionBook.HighFirst();
+    private final CommissionBook longBook = CommissionBook.HighFirst();
 
     // 卖盘
-    private final CommissionBook<Commission> shortBook = CommissionBook.LowFirst();
+    private final CommissionBook shortBook = CommissionBook.LowFirst();
 
     // 委托归属
-    private Map<String, CommissionBook<Commission>> commissionBelong = new HashMap<>();
+    private Map<String, CommissionBook> commissionBelong = new HashMap<>();
 
     // 成交处理
     private DealHandler dealHandler;
 
     public CommissionManager(){
-        CommissionBookListener<Commission> listener = new CommissionBookListener<Commission>() {
+        CommissionBookListener listener = new CommissionBookListener() {
             @Override
-            public void onAdd(CommissionBook<Commission> sender, Commission commission) {
+            public void onAdd(CommissionBook sender, Commission commission) {
                 commissionBelong.put(commission.getId(), sender);
             }
 
             @Override
-            public void onRemove(CommissionBook<Commission> sender, Commission commission) {
+            public void onRemove(CommissionBook sender, Commission commission) {
                 commissionBelong.remove(commission.getId());
             }
         };
@@ -72,7 +72,7 @@ public class CommissionManager {
      */
     public void cancel(String id){
         synchronized (locker){
-            CommissionBook<Commission> commissionBook = commissionBelong.get(id);
+            CommissionBook commissionBook = commissionBelong.get(id);
             if(commissionBook != null){
                 commissionBelong.remove(id);
                 Commission commission = commissionBook.find(id);
@@ -89,7 +89,7 @@ public class CommissionManager {
      * 买盘
      * @return
      */
-    public CommissionBook<Commission> getLongBook() {
+    public CommissionBook getLongBook() {
         return longBook;
     }
 
@@ -97,7 +97,7 @@ public class CommissionManager {
      * 卖盘
      * @return
      */
-    public CommissionBook<Commission> getShortBook() {
+    public CommissionBook getShortBook() {
         return shortBook;
     }
 }

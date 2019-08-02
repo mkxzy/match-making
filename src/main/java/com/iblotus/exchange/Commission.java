@@ -15,7 +15,7 @@ public interface Commission {
      * @param opponent
      * @param dealHandler
      */
-    void deal(CommissionBook<Commission> own, CommissionBook<Commission> opponent, DealHandler dealHandler);
+    void deal(CommissionBook own, CommissionBook opponent, DealHandler dealHandler);
 
     /**
      * 当前数量减去一定数量

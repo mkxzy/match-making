@@ -9,7 +9,7 @@ public class OrderBookTest {
 
     @Test
     public void testAddLowFirst(){
-        CommissionBook<Commission> orderBook = CommissionBook.LowFirst();
+        CommissionBook orderBook = CommissionBook.LowFirst();
         LimitPriceCommission commission1 = new LimitPriceCommission("1",1, BigDecimal.valueOf(1.1), LongShort.Long);
         LimitPriceCommission commission2 = new LimitPriceCommission("2",1, BigDecimal.valueOf(1.5), LongShort.Long);
         LimitPriceCommission commission3 = new LimitPriceCommission("3",1, BigDecimal.valueOf(1.2), LongShort.Long);

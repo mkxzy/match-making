@@ -6,27 +6,27 @@ import java.util.*;
 /**
  * 委托挂单
  */
-public class CommissionBook<T extends Commission> {
+public class CommissionBook implements OrderedList<Commission> {
 
-    private final List<T> list = new ArrayList<>();
+    private final List<Commission> list = new ArrayList<>();
 
-    private final CommissionLocateStrategy<T> strategy;
+    private final CommissionLocateStrategy strategy;
 
-    private final List<CommissionBookListener<T>> listeners = new ArrayList<>(2);
+    private final List<CommissionBookListener> listeners = new ArrayList<>(2);
 
-    private CommissionBook(final CommissionLocateStrategy<T> strategy){
+    private CommissionBook(final CommissionLocateStrategy strategy){
         this.strategy = strategy;
     }
 
-    static <T extends Commission> CommissionBook<T> HighFirst(){
-        return new CommissionBook<>(new HighPriceFirstCommissionStrategy<T>());
+    static CommissionBook HighFirst(){
+        return new CommissionBook(new HighPriceFirstCommissionStrategy());
     }
 
-    static <T extends Commission> CommissionBook<T> LowFirst(){
-        return new CommissionBook<>(new LowPriceFirstCommissionStategy<T>());
+    static CommissionBook LowFirst(){
+        return new CommissionBook(new LowPriceFirstCommissionStategy());
     }
 
-    public void addListener(CommissionBookListener<T> listener){
+    public void addListener(CommissionBookListener listener){
         this.listeners.add(listener);
     }
 
@@ -35,14 +35,15 @@ public class CommissionBook<T extends Commission> {
      * 添加到订单列表（排序）
      * @param c
      */
-    public void add(T c){
+    @Override
+    public void add(Commission c){
         int index = strategy.locate(c, this.list);
         if(index >= 0){
             list.add(index, c);
         }else{
             list.add(c);
         }
-        for (CommissionBookListener<T> listener: listeners) {
+        for (CommissionBookListener listener: listeners) {
             listener.onAdd(this, c);
         }
     }
@@ -52,8 +53,8 @@ public class CommissionBook<T extends Commission> {
      * @param id
      * @return
      */
-    public T find(String id){
-        for(T t: this.list){
+    public Commission find(String id){
+        for(Commission t: this.list){
             if(t.getId().equals(id)){
                 return t;
             }
@@ -65,26 +66,31 @@ public class CommissionBook<T extends Commission> {
      * 移除委托
      * @param c
      */
-    public void remove(T c){
+    @Override
+    public void remove(Commission c){
         list.remove(c);
-        for (CommissionBookListener<T> listener: listeners) {
+        for (CommissionBookListener listener: listeners) {
             listener.onRemove(this, c);
         }
     }
 
-    public T get(int index){
+    @Override
+    public Commission get(int index){
         return list.get(index);
     }
 
+    @Override
     public boolean isEmpty(){
         return list.isEmpty();
     }
 
+    @Override
     public int size(){
         return list.size();
     }
 
-    public T top(){
+    @Override
+    public Commission top(){
         if(this.isEmpty()){
             throw new RuntimeException("OrderBook is empty");
         }
@@ -94,7 +100,7 @@ public class CommissionBook<T extends Commission> {
     /**
      * 委托定位策略
      */
-    private interface CommissionLocateStrategy<T extends Commission> {
+    private interface CommissionLocateStrategy {
 
         /**
          * 查找任务的待插入索引
@@ -102,16 +108,16 @@ public class CommissionBook<T extends Commission> {
          * @param newCommition
          * @return
          */
-        int locate(T newCommition, List<T> list);
+        int locate(Commission newCommition, List<Commission> list);
     }
 
     /**
      * 低价优先（二分查找法高性能）
      */
-    private static class LowPriceFirstCommissionStategy<T extends Commission> implements CommissionLocateStrategy<T> {
+    private static class LowPriceFirstCommissionStategy implements CommissionLocateStrategy {
 
         @Override
-        public int locate(T newCommition, List<T> list) {
+        public int locate(Commission newCommition, List<Commission> list) {
             int mid;
             int start = 0;
             int end = list.size() - 1;
@@ -142,10 +148,10 @@ public class CommissionBook<T extends Commission> {
     /**
      * 高价优先（二分查找法高性能）
      */
-    private static class HighPriceFirstCommissionStrategy<T extends Commission> implements CommissionLocateStrategy<T> {
+    private static class HighPriceFirstCommissionStrategy implements CommissionLocateStrategy {
 
         @Override
-        public int locate(T newCommition, List<T> list) {
+        public int locate(Commission newCommition, List<Commission> list) {
             int mid;
             int start = 0;
             int end = list.size() - 1;

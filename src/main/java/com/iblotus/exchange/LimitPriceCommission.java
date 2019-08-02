@@ -26,8 +26,8 @@ public class LimitPriceCommission implements Commission {
     }
 
     @Override
-    public void deal(CommissionBook<Commission> own,
-                     CommissionBook<Commission> opponent,
+    public void deal(CommissionBook own,
+                     CommissionBook opponent,
                      DealHandler dealHandler) {
         do {
             if(opponent.isEmpty()){
