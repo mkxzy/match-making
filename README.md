@@ -13,11 +13,24 @@ maven:
 ```
 
 ```java
-CommissionManager manager = new CommissionManager();
-LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, LongShort.Long);
-LimitPriceCommission commission2 =
-                new LimitPriceCommission("b",BigDecimal.valueOf(9), 1, LongShort.Short);
-manager.submit(commission1);
-manager.submit(commission2);
+        DealHandler dealHandler = new DealHandler() {
+            @Override
+            public void onDeal(Deal<Commission> deal) {
+                System.out.printf("%f, %s, %s, %s\n",
+                        deal.getPrice(),
+                        deal.getAmount(),
+                        deal.getInitiate().getId(),
+                        deal.getPassive().getId());
+            }
+        };
+        CommissionManager manager = new CommissionManager(dealHandler);
+        LimitPriceCommission commission1 =
+                new LimitPriceCommission("a", BigDecimal.valueOf(10), 1, LongShort.Long);
+        LimitPriceCommission commission2 =
+                new LimitPriceCommission("b",BigDecimal.valueOf(11), 1, LongShort.Long);
+        LimitPriceCommission commission3 =
+                new LimitPriceCommission("c",BigDecimal.valueOf(9), 2, LongShort.Short);
+        manager.submit(commission1);
+        manager.submit(commission2);
+        manager.submit(commission3);
 ```
