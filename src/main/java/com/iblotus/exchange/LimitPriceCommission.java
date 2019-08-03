@@ -80,7 +80,6 @@ public class LimitPriceCommission extends AbstractCommission {
 
     /**
      * 价格
-     * @return
      */
     @Override
     public BigDecimal getPrice() {
@@ -89,7 +88,6 @@ public class LimitPriceCommission extends AbstractCommission {
 
     /**
      * 多空
-     * @return
      */
     @Override
     public LongShort getDirection() {
@@ -98,7 +96,6 @@ public class LimitPriceCommission extends AbstractCommission {
 
     /**
      * 获取当前数量
-     * @return
      */
     public long getAmount() {
         return currentAmount;

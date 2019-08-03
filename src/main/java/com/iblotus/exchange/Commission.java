@@ -11,17 +11,17 @@ public interface Commission {
 
     /**
      * 看多成交
-     * @param longBook
-     * @param shortBook
-     * @param dealHandler
+     * @param longBook 买盘
+     * @param shortBook 卖盘
+     * @param dealHandler 成交回调
      */
     void dealForLong(PendingBook<Commission> longBook, PendingBook<Commission> shortBook, DealHandler dealHandler);
 
     /**
      * 看空成交
-     * @param longBook
-     * @param
-     * @param dealHandler
+     * @param longBook 买盘
+     * @param shortBook 卖盘
+     * @param dealHandler 成交回调
      */
     void dealForShort(PendingBook<Commission> longBook, PendingBook<Commission> shortBook, DealHandler dealHandler);
 
@@ -31,20 +31,17 @@ public interface Commission {
     void substractAmount(long amount);
 
     /**
-     * 代理Id
-     * @return
+     * 委托ID
      */
     String getId();
 
     /**
      * 获取当前数量
-     * @return
      */
     long getAmount();
 
     /**
      * 价格
-     * @return
      */
     BigDecimal getPrice();
 

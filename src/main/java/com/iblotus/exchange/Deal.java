@@ -11,25 +11,21 @@ public interface Deal<T> {
 
     /**
      * 成交价
-     * @return
      */
     BigDecimal getPrice();
 
     /**
      * 成交数量
-     * @return
      */
     long getAmount();
 
     /**
      * 主动方
-     * @return
      */
     T getInitiate();
 
     /**
      * 被动方
-     * @return
      */
     T getPassive();
 }
