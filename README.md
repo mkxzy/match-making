@@ -3,6 +3,15 @@
 
 [项目地址](https://github.com/mkxzy/match-making)
 
+maven:
+```
+<dependency>
+    <groupId>com.iblotus.exchange</groupId>
+    <artifactId>match-making</artifactId>
+    <version>1.0</version>
+</dependency>
+```
+
 ```java
 CommissionManager manager = new CommissionManager();
 LimitPriceCommission commission1 =
