@@ -27,7 +27,7 @@ public class CommissionMatchingBenchmarkTest {
             }else {
                 direction = LongShort.Short;
             }
-            LimitPriceCommission commission = new LimitPriceCommission(String.valueOf(i),1, BigDecimal.ONE, direction);
+            LimitPriceCommission commission = new LimitPriceCommission(String.valueOf(i),BigDecimal.ONE, 1, direction);
             market.submit(commission);
         }
         stopWatch.stop();

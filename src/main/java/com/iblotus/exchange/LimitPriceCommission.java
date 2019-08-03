@@ -18,17 +18,23 @@ public class LimitPriceCommission extends AbstractCommission {
 
     private long currentAmount;
 
-    public LimitPriceCommission(String id, long amount, BigDecimal price, LongShort direction){
+    public LimitPriceCommission(String id, BigDecimal price, long amount,  LongShort direction){
         this.currentAmount = amount;
         this.price = price;
         this.direction = direction;
         this.id = id;
     }
 
+    /**
+     * 成交
+     * @param own
+     * @param opponent
+     * @param dealHandler
+     */
     @Override
-    protected void deal(CommissionBook own,
-                     CommissionBook opponent,
-                     CommissionDealHandler dealHandler) {
+    protected void deal(PendingBook<Commission> own,
+                        PendingBook<Commission> opponent,
+                        DealHandler dealHandler) {
         do {
             if(opponent.isEmpty()){
                 own.add(this);
@@ -72,11 +78,19 @@ public class LimitPriceCommission extends AbstractCommission {
         return deal;
     }
 
+    /**
+     * 价格
+     * @return
+     */
     @Override
     public BigDecimal getPrice() {
         return this.price;
     }
 
+    /**
+     * 多空
+     * @return
+     */
     @Override
     public LongShort getDirection() {
         return this.direction;

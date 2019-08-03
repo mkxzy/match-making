@@ -1,6 +1,11 @@
 package com.iblotus.exchange;
 
 
+import com.iblotus.exchange.exceptions.CommissionNotExistException;
+import com.iblotus.exchange.exceptions.CommissionPropertyException;
+import com.iblotus.exchange.exceptions.DuplicateCommissionException;
+
+import java.util.DuplicateFormatFlagsException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +29,7 @@ public class CommissionManager {
     private Map<String, CommissionBook> commissionBelong = new HashMap<>();
 
     // 成交处理
-    private CommissionDealHandler dealHandler;
+    private DealHandler dealHandler;
 
     public CommissionManager(){
         CommissionBookListener listener = new CommissionBookListener() {
@@ -42,7 +47,7 @@ public class CommissionManager {
         shortBook.addListener(listener);
     }
 
-    public CommissionManager(CommissionDealHandler dealHandler){
+    public CommissionManager(DealHandler dealHandler){
         this();
         this.dealHandler = dealHandler;
     }
@@ -53,15 +58,15 @@ public class CommissionManager {
      */
     public void submit(Commission commission){
         if(commissionBelong.containsKey(commission.getId())){
-            throw new RuntimeException("委托已存在");
-        }
+            throw new DuplicateCommissionException();
+    }
         synchronized(locker) {
             if(commission.getDirection() == LongShort.Long){
                 commission.dealForLong(longBook, shortBook, dealHandler);
             }else if(commission.getDirection() == LongShort.Short){
                 commission.dealForShort(longBook, shortBook, dealHandler);
             }else {
-                throw new RuntimeException("Direction Invalid");
+                throw new CommissionPropertyException("Direction must be Long or Short");
             }
         }
     }
@@ -81,7 +86,7 @@ public class CommissionManager {
                     return;
                 }
             }
-            throw new RuntimeException("撤单失败");
+            throw new CommissionNotExistException();
         }
     }
 

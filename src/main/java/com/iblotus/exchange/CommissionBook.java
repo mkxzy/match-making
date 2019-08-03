@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * 委托挂单
  */
-public class CommissionBook implements OrderedList<Commission> {
+public class CommissionBook implements PendingBook<Commission> {
 
     private final List<Commission> list = new ArrayList<>();
 
@@ -42,6 +42,14 @@ public class CommissionBook implements OrderedList<Commission> {
             }
         }
         return null;
+    }
+
+    @Override
+    public Commission top(){
+        if(this.isEmpty()){
+            throw new RuntimeException("OrderBook is empty");
+        }
+        return list.get(0);
     }
 
 
@@ -91,11 +99,8 @@ public class CommissionBook implements OrderedList<Commission> {
         return list.size();
     }
 
-    public Commission top(){
-        if(this.isEmpty()){
-            throw new RuntimeException("OrderBook is empty");
-        }
-        return list.get(0);
+    public List<Commission> toList(){
+        return Collections.unmodifiableList(this.list);
     }
 
     /**

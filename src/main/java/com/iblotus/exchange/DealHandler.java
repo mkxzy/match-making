@@ -4,7 +4,7 @@ package com.iblotus.exchange;
 /**
  * 委托成交回调接口
  */
-public interface CommissionDealHandler {
+public interface DealHandler {
 
     /**
      * 回调

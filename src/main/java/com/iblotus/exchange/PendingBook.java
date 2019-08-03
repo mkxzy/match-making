@@ -2,40 +2,46 @@ package com.iblotus.exchange;
 
 
 /**
- * 排序列表
+ * 挂单接口
  * @param <T>
  */
-public interface OrderedList<T> {
+public interface PendingBook<T> {
 
     /**
-     * 加入列表，位置由列表控制
+     * 新增
      * @param c
      * @return
      */
     int add(T c);
 
     /**
-     * 移除元素
+     * 删除
      * @param c
      */
     void remove(T c);
 
     /**
-     * 获取元素
+     * 查询
      * @param index
      * @return
      */
     T get(int index);
 
     /**
-     * 是否为空
+     * 获取第一个元素
      * @return
      */
-    boolean isEmpty();
+    T top();
 
     /**
-     * 数量
+     * 获取长度
      * @return
      */
     int size();
+
+    /**
+     * 判断是否为空
+     * @return
+     */
+    boolean isEmpty();
 }

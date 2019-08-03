@@ -10,11 +10,11 @@ public class OrderBookTest {
     @Test
     public void testAddLowFirst(){
         CommissionBook orderBook = CommissionBook.LowFirst();
-        LimitPriceCommission commission1 = new LimitPriceCommission("1",1, BigDecimal.valueOf(1.1), LongShort.Long);
-        LimitPriceCommission commission2 = new LimitPriceCommission("2",1, BigDecimal.valueOf(1.5), LongShort.Long);
-        LimitPriceCommission commission3 = new LimitPriceCommission("3",1, BigDecimal.valueOf(1.2), LongShort.Long);
-        LimitPriceCommission commission4 = new LimitPriceCommission("4",1, BigDecimal.valueOf(1.3), LongShort.Long);
-        LimitPriceCommission commission5 = new LimitPriceCommission("5",1, BigDecimal.valueOf(1.3), LongShort.Long);
+        LimitPriceCommission commission1 = new LimitPriceCommission("1",BigDecimal.valueOf(1.1), 1, LongShort.Long);
+        LimitPriceCommission commission2 = new LimitPriceCommission("2",BigDecimal.valueOf(1.5), 1, LongShort.Long);
+        LimitPriceCommission commission3 = new LimitPriceCommission("3",BigDecimal.valueOf(1.2), 1, LongShort.Long);
+        LimitPriceCommission commission4 = new LimitPriceCommission("4",BigDecimal.valueOf(1.3), 1, LongShort.Long);
+        LimitPriceCommission commission5 = new LimitPriceCommission("5",BigDecimal.valueOf(1.3), 1, LongShort.Long);
         orderBook.add(commission1);
         orderBook.add(commission2);
         orderBook.add(commission3);

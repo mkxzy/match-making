@@ -7,14 +7,14 @@ package com.iblotus.exchange;
 public abstract class AbstractCommission implements Commission {
 
     @Override
-    public void dealForLong(CommissionBook longBook, CommissionBook shortBook, CommissionDealHandler dealHandler) {
+    public void dealForLong(PendingBook<Commission> longBook, PendingBook<Commission> shortBook, DealHandler dealHandler) {
         this.deal(longBook, shortBook, dealHandler);
     }
 
     @Override
-    public void dealForShort(CommissionBook longBook, CommissionBook shortBook, CommissionDealHandler dealHandler) {
+    public void dealForShort(PendingBook<Commission> longBook, PendingBook<Commission> shortBook, DealHandler dealHandler) {
         this.deal(shortBook, longBook, dealHandler);
     }
 
-    protected abstract void deal(CommissionBook own, CommissionBook opponent, CommissionDealHandler dealHandler);
+    protected abstract void deal(PendingBook<Commission> own, PendingBook<Commission> opponent, DealHandler dealHandler);
 }

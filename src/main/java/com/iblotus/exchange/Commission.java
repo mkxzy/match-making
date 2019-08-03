@@ -9,21 +9,13 @@ import java.math.BigDecimal;
  */
 public interface Commission {
 
-//    /**
-//     * 买入成交
-//     * @param own
-//     * @param opponent
-//     * @param dealHandler
-//     */
-//    void deal(CommissionBook own, CommissionBook opponent, CommissionDealHandler dealHandler);
-
     /**
      * 看多成交
      * @param longBook
      * @param shortBook
      * @param dealHandler
      */
-    void dealForLong(CommissionBook longBook, CommissionBook shortBook, CommissionDealHandler dealHandler);
+    void dealForLong(PendingBook<Commission> longBook, PendingBook<Commission> shortBook, DealHandler dealHandler);
 
     /**
      * 看空成交
@@ -31,7 +23,7 @@ public interface Commission {
      * @param
      * @param dealHandler
      */
-    void dealForShort(CommissionBook longBook, CommissionBook shortBook, CommissionDealHandler dealHandler);
+    void dealForShort(PendingBook<Commission> longBook, PendingBook<Commission> shortBook, DealHandler dealHandler);
 
     /**
      * 当前数量减去一定数量
