@@ -24,7 +24,7 @@ DealHandler dealHandler = new DealHandler() {
                 deal.getPassive().getId());
     }
 };
-CommissionManager manager = new CommissionManager(dealHandler);
+MatchMaker manager = new MatchMaker(dealHandler);
 LimitPriceCommission commission1 =
         new LimitPriceCommission("a", BigDecimal.valueOf(10), 1, LongShort.Long);
 LimitPriceCommission commission2 =
