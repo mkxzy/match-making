@@ -5,8 +5,8 @@ import com.iblotus.exchange.exceptions.CommissionNotExistException;
 import com.iblotus.exchange.exceptions.CommissionPropertyException;
 import com.iblotus.exchange.exceptions.DuplicateCommissionException;
 
-import java.util.DuplicateFormatFlagsException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * 处理委托，维护委托队列
  */
-public class CommissionManager {
+public class MatchMaker {
 
     private final Object locker = new Object();
 
@@ -31,7 +31,12 @@ public class CommissionManager {
     // 成交处理
     private DealHandler dealHandler;
 
-    public CommissionManager(){
+    @Deprecated
+    public MatchMaker(){
+        this(null);
+    }
+
+    public MatchMaker(DealHandler dealHandler){
         CommissionBookListener listener = new CommissionBookListener() {
             @Override
             public void onAdd(CommissionBook sender, Commission commission) {
@@ -45,10 +50,6 @@ public class CommissionManager {
         };
         longBook.addListener(listener);
         shortBook.addListener(listener);
-    }
-
-    public CommissionManager(DealHandler dealHandler){
-        this();
         this.dealHandler = dealHandler;
     }
 
@@ -94,15 +95,15 @@ public class CommissionManager {
      * 买盘
      * @return
      */
-    public CommissionBook getLongBook() {
-        return longBook;
+    public List<Commission> getLongs() {
+        return longBook.toList();
     }
 
     /**
      * 卖盘
      * @return
      */
-    public CommissionBook getShortBook() {
-        return shortBook;
+    public List<Commission> getShorts() {
+        return shortBook.toList();
     }
 }

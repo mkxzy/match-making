@@ -8,7 +8,7 @@ Maven：
 <dependency>
     <groupId>com.iblotus.exchange</groupId>
     <artifactId>match-making</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 

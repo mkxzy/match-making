@@ -1,6 +1,8 @@
 package com.iblotus.exchange;
 
 
+import java.util.List;
+
 /**
  * 挂单接口
  * @param <T>
@@ -44,4 +46,10 @@ public interface PendingBook<T> {
      * @return
      */
     boolean isEmpty();
+
+    /**
+     * 挂单列表
+     * @return
+     */
+    List<Commission> toList();
 }

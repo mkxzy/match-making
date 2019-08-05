@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  */
 public class CommissionMatchingBenchmarkTest {
 
-    private CommissionManager market = new CommissionManager();
+    private MatchMaker market = new MatchMaker();
 
     @Ignore
     @Test
@@ -31,8 +31,8 @@ public class CommissionMatchingBenchmarkTest {
             market.submit(commission);
         }
         stopWatch.stop();
-        System.out.println(market.getLongBook().size());
-        System.out.println(market.getShortBook().size());
+        System.out.println(market.getLongs().size());
+        System.out.println(market.getShorts().size());
         System.out.println(stopWatch.getTime());
         System.out.println("TPS: " + (count * 1000 / stopWatch.getTime()));
     }

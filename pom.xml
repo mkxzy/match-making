@@ -12,7 +12,7 @@
     <groupId>com.iblotus.exchange</groupId>
     <artifactId>match-making</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <name>match-making</name>
     <!-- FIXME change it to the project's website -->
