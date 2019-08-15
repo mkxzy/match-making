@@ -21,14 +21,14 @@ public class CommissionMatchingBenchmarkTest {
         stopWatch.start();
         long count = 10000000;
         for(int i = 0; i < count; i++){
-            LongShort direction;
+            Side direction;
             if(i % 2 == 0){
-                direction = LongShort.Long;
+                direction = Side.Long;
             }else {
-                direction = LongShort.Short;
+                direction = Side.Short;
             }
             LimitPriceCommission commission = new LimitPriceCommission(String.valueOf(i),BigDecimal.ONE, 1, direction);
-            market.submit(commission);
+            market.matchNow(commission);
         }
         stopWatch.stop();
         System.out.println(market.getLongs().size());

@@ -23,11 +23,11 @@ public class CommissionManagerTest {
     public void testSubmitWithDeal(){
         MatchMaker manager = new MatchMaker();
         LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, LongShort.Long);
+                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         LimitPriceCommission commission2 =
-                new LimitPriceCommission("b",BigDecimal.valueOf(9), 1, LongShort.Short);
-        manager.submit(commission1);
-        manager.submit(commission2);
+                new LimitPriceCommission("b",BigDecimal.valueOf(9), 1, Side.Short);
+        manager.matchNow(commission1);
+        manager.matchNow(commission2);
         Assert.assertEquals(0, manager.getLongs().size());
         Assert.assertEquals(0, manager.getShorts().size());
     }
@@ -36,11 +36,11 @@ public class CommissionManagerTest {
     public void testSubmitWithoutDeal(){
         MatchMaker manager = new MatchMaker();
         LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, LongShort.Long);
+                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         LimitPriceCommission commission2 =
-                new LimitPriceCommission("b",BigDecimal.valueOf(11), 1, LongShort.Short);
-        manager.submit(commission1);
-        manager.submit(commission2);
+                new LimitPriceCommission("b",BigDecimal.valueOf(11), 1, Side.Short);
+        manager.matchNow(commission1);
+        manager.matchNow(commission2);
         Assert.assertEquals(1, manager.getLongs().size());
         Assert.assertEquals(1, manager.getShorts().size());
     }
@@ -49,19 +49,19 @@ public class CommissionManagerTest {
     public void testSubmitWithDuplicateException(){
         MatchMaker manager = new MatchMaker();
         LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, LongShort.Long);
+                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         LimitPriceCommission commission2 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(11), 1, LongShort.Short);
-        manager.submit(commission1);
-        manager.submit(commission2);
+                new LimitPriceCommission("a",BigDecimal.valueOf(11), 1, Side.Short);
+        manager.matchNow(commission1);
+        manager.matchNow(commission2);
     }
 
     @Test
     public void testCancel(){
         MatchMaker manager = new MatchMaker();
         LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, LongShort.Long);
-        manager.submit(commission1);
+                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
+        manager.matchNow(commission1);
         manager.cancel("a");
         Assert.assertEquals(0, manager.getLongs().size());
     }
@@ -70,8 +70,8 @@ public class CommissionManagerTest {
     public void testCancelFail(){
         MatchMaker manager = new MatchMaker();
         LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, LongShort.Long);
-        manager.submit(commission1);
+                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
+        manager.matchNow(commission1);
         manager.cancel("b");
         Assert.assertEquals(0, manager.getLongs().size());
     }
@@ -82,7 +82,7 @@ public class CommissionManagerTest {
         Answer answer = new Answer() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                Deal<Commission> deal = (Deal<Commission>)invocationOnMock.getArguments()[0];
+                Deal<PendingCommission> deal = (Deal<PendingCommission>)invocationOnMock.getArguments()[0];
                 System.out.printf("%f, %s, %s, %s\n",
                         deal.getPrice(),
                         deal.getAmount(),
@@ -94,14 +94,14 @@ public class CommissionManagerTest {
         doAnswer(answer).when(dealHandler).onDeal(any(Deal.class));
         MatchMaker manager = new MatchMaker(dealHandler);
         LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, LongShort.Long);
+                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         LimitPriceCommission commission2 =
-                new LimitPriceCommission("b",BigDecimal.valueOf(11), 1, LongShort.Long);
+                new LimitPriceCommission("b",BigDecimal.valueOf(11), 1, Side.Long);
         LimitPriceCommission commission3 =
-                new LimitPriceCommission("c",BigDecimal.valueOf(9), 2, LongShort.Short);
-        manager.submit(commission1);
-        manager.submit(commission2);
-        manager.submit(commission3);
+                new LimitPriceCommission("c",BigDecimal.valueOf(9), 2, Side.Short);
+        manager.matchNow(commission1);
+        manager.matchNow(commission2);
+        manager.matchNow(commission3);
         verify(dealHandler, times( 2 )).onDeal(any(Deal.class));
     }
 }

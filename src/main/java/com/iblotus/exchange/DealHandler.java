@@ -10,5 +10,5 @@ public interface DealHandler {
      * 回调
      * @param deal
      */
-    void onDeal(Deal<Commission> deal);
+    void onDeal(Deal<PendingCommission> deal);
 }

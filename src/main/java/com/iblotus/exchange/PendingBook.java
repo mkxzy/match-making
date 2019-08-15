@@ -51,5 +51,5 @@ public interface PendingBook<T> {
      * 挂单列表
      * @return
      */
-    List<Commission> toList();
+    List<T> toList();
 }

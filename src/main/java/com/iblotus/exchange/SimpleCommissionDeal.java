@@ -6,17 +6,17 @@ import java.math.BigDecimal;
 /**
  * 成交实现类
  */
-class SimpleCommissionDeal implements Deal<Commission> {
+class SimpleCommissionDeal implements Deal<PendingCommission> {
 
     private final BigDecimal price;
 
     private final long amount;
 
-    private final Commission initiate;
+    private final PendingCommission initiate;
 
-    private final Commission passive;
+    private final PendingCommission passive;
 
-    SimpleCommissionDeal(BigDecimal price, long amount, Commission initiate, Commission passive) {
+    SimpleCommissionDeal(BigDecimal price, long amount, PendingCommission initiate, PendingCommission passive) {
         this.price = price;
         this.amount = amount;
         this.initiate = initiate;
@@ -34,12 +34,12 @@ class SimpleCommissionDeal implements Deal<Commission> {
     }
 
     @Override
-    public Commission getInitiate() {
+    public PendingCommission getInitiate() {
         return this.initiate;
     }
 
     @Override
-    public Commission getPassive() {
+    public PendingCommission getPassive() {
         return this.passive;
     }
 }

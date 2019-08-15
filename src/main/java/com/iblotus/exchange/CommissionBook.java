@@ -6,9 +6,9 @@ import java.util.*;
 /**
  * 委托挂单
  */
-public class CommissionBook implements PendingBook<Commission> {
+public class CommissionBook implements PendingBook<PendingCommission> {
 
-    private final List<Commission> list = new ArrayList<>();
+    private final List<PendingCommission> list = new ArrayList<>();
 
     private final CommissionLocateStrategy strategy;
 
@@ -26,7 +26,7 @@ public class CommissionBook implements PendingBook<Commission> {
         return new CommissionBook(new LowPriceFirstCommissionStategy());
     }
 
-    public void addListener(CommissionBookListener listener){
+    void addListener(CommissionBookListener listener){
         this.listeners.add(listener);
     }
 
@@ -35,8 +35,8 @@ public class CommissionBook implements PendingBook<Commission> {
      * @param id
      * @return
      */
-    public Commission find(String id){
-        for(Commission t: this.list){
+    public PendingCommission find(String id){
+        for(PendingCommission t: this.list){
             if(t.getId().equals(id)){
                 return t;
             }
@@ -45,7 +45,7 @@ public class CommissionBook implements PendingBook<Commission> {
     }
 
     @Override
-    public Commission top(){
+    public PendingCommission top(){
         if(this.isEmpty()){
             throw new RuntimeException("OrderBook is empty");
         }
@@ -55,10 +55,12 @@ public class CommissionBook implements PendingBook<Commission> {
 
     /**
      * 添加到订单列表（排序）
-     * @param c
+     * @param c 委托
+     *
+     * @return 档位索引（从0开始）
      */
     @Override
-    public int add(Commission c){
+    public int add(PendingCommission c){
         int index = strategy.locate(c, this.list);
         if(index >= 0){
             list.add(index, c);
@@ -77,7 +79,7 @@ public class CommissionBook implements PendingBook<Commission> {
      * @param c
      */
     @Override
-    public void remove(Commission c){
+    public void remove(PendingCommission c){
         list.remove(c);
         for (CommissionBookListener listener: listeners) {
             listener.onRemove(this, c);
@@ -85,7 +87,7 @@ public class CommissionBook implements PendingBook<Commission> {
     }
 
     @Override
-    public Commission get(int index){
+    public PendingCommission get(int index){
         return list.get(index);
     }
 
@@ -100,7 +102,7 @@ public class CommissionBook implements PendingBook<Commission> {
     }
 
     @Override
-    public List<Commission> toList(){
+    public List<PendingCommission> toList(){
         return Collections.unmodifiableList(this.list);
     }
 
@@ -115,7 +117,7 @@ public class CommissionBook implements PendingBook<Commission> {
          * @param newCommition
          * @return
          */
-        int locate(Commission newCommition, List<Commission> list);
+        int locate(PendingCommission newCommition, List<PendingCommission> list);
     }
 
     /**
@@ -124,7 +126,7 @@ public class CommissionBook implements PendingBook<Commission> {
     private static class LowPriceFirstCommissionStategy implements CommissionLocateStrategy {
 
         @Override
-        public int locate(Commission newCommition, List<Commission> list) {
+        public int locate(PendingCommission newCommition, List<PendingCommission> list) {
             int mid;
             int start = 0;
             int end = list.size() - 1;
@@ -158,7 +160,7 @@ public class CommissionBook implements PendingBook<Commission> {
     private static class HighPriceFirstCommissionStrategy implements CommissionLocateStrategy {
 
         @Override
-        public int locate(Commission newCommition, List<Commission> list) {
+        public int locate(PendingCommission newCommition, List<PendingCommission> list) {
             int mid;
             int start = 0;
             int end = list.size() - 1;

@@ -2,7 +2,6 @@ package com.iblotus.exchange;
 
 
 import com.iblotus.exchange.exceptions.CommissionNotExistException;
-import com.iblotus.exchange.exceptions.CommissionPropertyException;
 import com.iblotus.exchange.exceptions.DuplicateCommissionException;
 
 import java.util.HashMap;
@@ -31,44 +30,50 @@ public class MatchMaker {
     // 成交处理
     private DealHandler dealHandler;
 
+    private MatcherProvider provider;
+
     @Deprecated
     public MatchMaker(){
-        this(null);
+        this.init(null, new DefaultMatcherProvider(longBook, shortBook));
     }
 
     public MatchMaker(DealHandler dealHandler){
+        this.init(dealHandler, new DefaultMatcherProvider(longBook, shortBook));
+    }
+
+    public MatchMaker(DealHandler dealHandler, MatcherProvider provider){
+        this.init(dealHandler, provider);
+    }
+
+    private void init(DealHandler dealHandler, MatcherProvider provider){
         CommissionBookListener listener = new CommissionBookListener() {
             @Override
-            public void onAdd(CommissionBook sender, Commission commission) {
+            public void onAdd(CommissionBook sender, PendingCommission commission) {
                 commissionBelong.put(commission.getId(), sender);
             }
 
             @Override
-            public void onRemove(CommissionBook sender, Commission commission) {
+            public void onRemove(CommissionBook sender, PendingCommission commission) {
                 commissionBelong.remove(commission.getId());
             }
         };
         longBook.addListener(listener);
         shortBook.addListener(listener);
         this.dealHandler = dealHandler;
+        this.provider = provider;
     }
 
     /**
-     * 提交委托
+     * 撮合
      * @param commission
      */
-    public void submit(Commission commission){
-        if(commissionBelong.containsKey(commission.getId())){
-            throw new DuplicateCommissionException();
-    }
-        synchronized(locker) {
-            if(commission.getDirection() == LongShort.Long){
-                commission.dealForLong(longBook, shortBook, dealHandler);
-            }else if(commission.getDirection() == LongShort.Short){
-                commission.dealForShort(longBook, shortBook, dealHandler);
-            }else {
-                throw new CommissionPropertyException("Direction must be Long or Short");
+    public void matchNow(Commission commission){
+        synchronized (locker){
+            if(this.commissionBelong.containsKey(commission.getId())){
+                throw new DuplicateCommissionException();
             }
+            CommissionMatcher commissionMatcher = provider.findMatcher(commission.getMatcher());
+            commissionMatcher.matchAndDeal(commission, dealHandler);
         }
     }
 
@@ -81,7 +86,7 @@ public class MatchMaker {
             CommissionBook commissionBook = commissionBelong.get(id);
             if(commissionBook != null){
                 commissionBelong.remove(id);
-                Commission commission = commissionBook.find(id);
+                PendingCommission commission = commissionBook.find(id);
                 if(commission != null){
                     commissionBook.remove(commission);
                     return;
@@ -95,7 +100,7 @@ public class MatchMaker {
      * 买盘
      * @return
      */
-    public List<Commission> getLongs() {
+    public List<PendingCommission> getLongs() {
         return longBook.toList();
     }
 
@@ -103,7 +108,7 @@ public class MatchMaker {
      * 卖盘
      * @return
      */
-    public List<Commission> getShorts() {
+    public List<PendingCommission> getShorts() {
         return shortBook.toList();
     }
 }

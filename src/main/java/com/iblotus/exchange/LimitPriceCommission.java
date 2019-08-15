@@ -8,74 +8,21 @@ import java.math.BigDecimal;
  * 限价委托
  * @param
  */
-public class LimitPriceCommission extends AbstractCommission {
+public class LimitPriceCommission implements Commission {
 
     private final String id;
 
     private final BigDecimal price;
 
-    private final LongShort direction;
+    private final Side direction;
 
     private long currentAmount;
 
-    public LimitPriceCommission(String id, BigDecimal price, long amount,  LongShort direction){
+    public LimitPriceCommission(String id, BigDecimal price, long amount, Side direction){
         this.currentAmount = amount;
         this.price = price;
         this.direction = direction;
         this.id = id;
-    }
-
-    /**
-     * 成交
-     * @param own
-     * @param opponent
-     * @param dealHandler
-     */
-    @Override
-    protected void deal(PendingBook<Commission> own,
-                        PendingBook<Commission> opponent,
-                        DealHandler dealHandler) {
-        do {
-            if(opponent.isEmpty()){
-                own.add(this);
-                break;
-            }
-            Commission passive = opponent.top();
-            if(!this.canDeal(passive)){
-                own.add(this);
-                break;
-            }
-            Deal<Commission> deal = this.makeDeal(passive);
-            if(dealHandler != null){
-                dealHandler.onDeal(deal);
-            }
-            if(passive.getAmount() == 0){
-                opponent.remove(passive);
-            }
-        } while (this.getAmount() > 0);
-    }
-
-    private boolean canDeal(Commission passive) {
-        if(this.getDirection() == LongShort.Long){
-            return this.getPrice().compareTo(passive.getPrice()) >= 0;
-        }else{
-            return this.getPrice().compareTo(passive.getPrice()) <= 0;
-        }
-    }
-
-    private Deal<Commission> makeDeal(Commission passive) {
-        long dealAmount;
-        if(this.getAmount() < passive.getAmount()){
-            dealAmount = this.getAmount();
-        }else{
-            dealAmount = passive.getAmount();
-        }
-
-        BigDecimal dealPrice = passive.getPrice();
-        passive.substractAmount(dealAmount);
-        this.substractAmount(dealAmount);
-        SimpleCommissionDeal deal = new SimpleCommissionDeal(dealPrice, dealAmount, this, passive);
-        return deal;
     }
 
     /**
@@ -90,7 +37,7 @@ public class LimitPriceCommission extends AbstractCommission {
      * 多空
      */
     @Override
-    public LongShort getDirection() {
+    public Side getDirection() {
         return this.direction;
     }
 
@@ -98,19 +45,16 @@ public class LimitPriceCommission extends AbstractCommission {
      * 获取当前数量
      */
     public long getAmount() {
-        return currentAmount;
-    }
-
-    /**
-     * 当前数量减去相应数量（成交）
-     * @param amount
-     */
-    public void substractAmount(long amount){
-        currentAmount = currentAmount - amount;
+        return this.currentAmount;
     }
 
     @Override
     public String getId() {
         return this.id;
+    }
+
+    @Override
+    public String getMatcher() {
+        return "LIMIT_PRICE";
     }
 }

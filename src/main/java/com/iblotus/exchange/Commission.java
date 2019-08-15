@@ -3,32 +3,11 @@ package com.iblotus.exchange;
 
 import java.math.BigDecimal;
 
+
 /**
- * 委托代理接口
- * 定义委托成交逻辑
+ * 定义委托接口
  */
 public interface Commission {
-
-    /**
-     * 看多成交
-     * @param longBook 买盘
-     * @param shortBook 卖盘
-     * @param dealHandler 成交回调
-     */
-    void dealForLong(PendingBook<Commission> longBook, PendingBook<Commission> shortBook, DealHandler dealHandler);
-
-    /**
-     * 看空成交
-     * @param longBook 买盘
-     * @param shortBook 卖盘
-     * @param dealHandler 成交回调
-     */
-    void dealForShort(PendingBook<Commission> longBook, PendingBook<Commission> shortBook, DealHandler dealHandler);
-
-    /**
-     * 当前数量减去一定数量
-     */
-    void substractAmount(long amount);
 
     /**
      * 委托ID
@@ -48,5 +27,11 @@ public interface Commission {
     /**
      * 行情方向
      */
-    LongShort getDirection();
+    Side getDirection();
+
+    /**
+     * 委托策略
+     * @return
+     */
+    String getMatcher();
 }
