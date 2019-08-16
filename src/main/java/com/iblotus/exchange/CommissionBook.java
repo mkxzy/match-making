@@ -12,23 +12,17 @@ public class CommissionBook implements PendingBook<PendingCommission> {
 
     private final CommissionBookIndexLocator strategy;
 
-//    private final List<CommissionBookListener> listeners = new ArrayList<>(2);
-
     public CommissionBook(final CommissionBookIndexLocator strategy){
         this.strategy = strategy;
     }
 
-    static CommissionBook HighFirst(){
+    public static CommissionBook HighFirst(){
         return new CommissionBook(new HighPriceFirstCommissionStrategy());
     }
 
-    static CommissionBook LowFirst(){
+    public static CommissionBook LowFirst(){
         return new CommissionBook(new LowPriceFirstCommissionStategy());
     }
-
-//    void addListener(CommissionBookListener listener){
-//        this.listeners.add(listener);
-//    }
 
     /**
      * 根据ID查找委托
@@ -68,9 +62,6 @@ public class CommissionBook implements PendingBook<PendingCommission> {
             list.add(c);
             index = list.size() - 1;
         }
-//        for (CommissionBookListener listener: listeners) {
-//            listener.onAdd(this, c);
-//        }
         return index;
     }
 
@@ -79,11 +70,8 @@ public class CommissionBook implements PendingBook<PendingCommission> {
      * @param c
      */
     @Override
-    public void remove(PendingCommission c){
+    public void remove(PendingCommission c) {
         list.remove(c);
-//        for (CommissionBookListener listener: listeners) {
-//            listener.onRemove(this, c);
-//        }
     }
 
     @Override

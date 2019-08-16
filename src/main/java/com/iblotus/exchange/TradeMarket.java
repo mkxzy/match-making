@@ -18,6 +18,7 @@ public class TradeMarket {
     // 成交处理
     private DealHandler dealHandler;
 
+    // 盘口
     private final CommissionHandicap handicap = new CommissionHandicap();
 
     private TradeStrategyResolver strategyResolver;
@@ -73,7 +74,7 @@ public class TradeMarket {
      * @return
      */
     public List<PendingCommission> getLongs() {
-        return handicap.getLongCommissions();
+        return handicap.getLong();
     }
 
     /**
@@ -81,6 +82,6 @@ public class TradeMarket {
      * @return
      */
     public List<PendingCommission> getShorts() {
-        return handicap.getShortCommissions();
+        return handicap.getShort();
     }
 }

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 /**
  * 功能测试
  */
-public class CommissionManagerTest {
+public class TradeMarketTest {
 
     @Test
     public void testSubmitWithDeal(){

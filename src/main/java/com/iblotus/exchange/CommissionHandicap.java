@@ -3,6 +3,7 @@ package com.iblotus.exchange;
 
 import com.iblotus.exchange.exceptions.CommissionNotExistException;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,11 +75,21 @@ public class CommissionHandicap {
         return commissionBelong.containsKey(id);
     }
 
-    public List<PendingCommission> getLongCommissions(){
+    public List<PendingCommission> getLong(){
         return this.longBook.toList();
     }
 
-    public List<PendingCommission> getShortCommissions(){
+    public List<PendingCommission> getShort(){
         return this.shortBook.toList();
+    }
+
+    public Map<BigDecimal, List<PendingCommission>> getLongPriceAggr(Aggregator<PendingCommission, BigDecimal> aggregator){
+        List<PendingCommission> commissions = this.getLong();
+        return aggregator.aggregate(commissions);
+    }
+
+    public Map<BigDecimal, List<PendingCommission>> getShortPriceAggr(Aggregator<PendingCommission, BigDecimal> aggregator){
+        List<PendingCommission> commissions = this.getShort();
+        return aggregator.aggregate(commissions);
     }
 }

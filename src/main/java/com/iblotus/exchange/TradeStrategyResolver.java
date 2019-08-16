@@ -2,7 +2,7 @@ package com.iblotus.exchange;
 
 
 /**
- * 策略库
+ * 交易策略库
  */
 public interface TradeStrategyResolver {
 

@@ -32,6 +32,10 @@ public class SimpleCommission implements Commission {
         this.strategy = strategy;
     }
 
+    /**
+     * 委托ID
+     * @return
+     */
     @Override
     public String getId() {
         return this.id;
