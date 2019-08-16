@@ -10,11 +10,11 @@ public class CommissionBook implements PendingBook<PendingCommission> {
 
     private final List<PendingCommission> list = new ArrayList<>();
 
-    private final CommissionLocateStrategy strategy;
+    private final CommissionBookIndexLocator strategy;
 
 //    private final List<CommissionBookListener> listeners = new ArrayList<>(2);
 
-    public CommissionBook(final CommissionLocateStrategy strategy){
+    public CommissionBook(final CommissionBookIndexLocator strategy){
         this.strategy = strategy;
     }
 
@@ -109,20 +109,20 @@ public class CommissionBook implements PendingBook<PendingCommission> {
     /**
      * 低价优先（二分查找法高性能）
      */
-    private static class LowPriceFirstCommissionStategy implements CommissionLocateStrategy {
+    private static class LowPriceFirstCommissionStategy implements CommissionBookIndexLocator {
 
         @Override
-        public int findProperIndex(PendingCommission newCommition, List<PendingCommission> list) {
+        public int findProperIndex(PendingCommission commission, List<PendingCommission> list) {
             int mid;
             int start = 0;
             int end = list.size() - 1;
             while (start <= end){
                 mid = (end - start) / 2 + start;
-                if(newCommition.getPrice().compareTo(list.get(mid).getPrice()) < 0){
+                if(commission.getPrice().compareTo(list.get(mid).getPrice()) < 0){
                     if(mid == 0){
                         return 0;
                     }
-                    if(newCommition.getPrice().compareTo(list.get(mid-1).getPrice()) >= 0){
+                    if(commission.getPrice().compareTo(list.get(mid-1).getPrice()) >= 0){
                         return mid;
                     }
                     end = mid - 1;
@@ -130,7 +130,7 @@ public class CommissionBook implements PendingBook<PendingCommission> {
                     if(mid > end){
                         return -1;
                     }
-                    if(newCommition.getPrice().compareTo(list.get(mid).getPrice()) < 0){
+                    if(commission.getPrice().compareTo(list.get(mid).getPrice()) < 0){
                         return mid;
                     }
                     start = mid + 1;
@@ -143,20 +143,20 @@ public class CommissionBook implements PendingBook<PendingCommission> {
     /**
      * 高价优先（二分查找法高性能）
      */
-    private static class HighPriceFirstCommissionStrategy implements CommissionLocateStrategy {
+    private static class HighPriceFirstCommissionStrategy implements CommissionBookIndexLocator {
 
         @Override
-        public int findProperIndex(PendingCommission newCommition, List<PendingCommission> list) {
+        public int findProperIndex(PendingCommission commission, List<PendingCommission> list) {
             int mid;
             int start = 0;
             int end = list.size() - 1;
             while (start <= end){
                 mid = (end - start) / 2 + start;
-                if(newCommition.getPrice().compareTo(list.get(mid).getPrice()) > 0){
+                if(commission.getPrice().compareTo(list.get(mid).getPrice()) > 0){
                     if(mid == 0){
                         return 0;
                     }
-                    if(newCommition.getPrice().compareTo(list.get(mid-1).getPrice()) <= 0){
+                    if(commission.getPrice().compareTo(list.get(mid-1).getPrice()) <= 0){
                         return mid;
                     }
                     end = mid - 1;
@@ -164,7 +164,7 @@ public class CommissionBook implements PendingBook<PendingCommission> {
                     if(mid > end){
                         return -1;
                     }
-                    if(newCommition.getPrice().compareTo(list.get(mid).getPrice()) > 0){
+                    if(commission.getPrice().compareTo(list.get(mid).getPrice()) > 0){
                         return mid;
                     }
                     start = mid + 1;

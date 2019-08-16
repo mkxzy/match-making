@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  * 限价委托
  * @param
  */
-public class LimitPriceCommission implements Commission {
+public class SimpleCommission implements Commission {
 
     private final String id;
 
@@ -16,13 +16,25 @@ public class LimitPriceCommission implements Commission {
 
     private final Side direction;
 
-    private long currentAmount;
+    private final long currentAmount;
 
-    public LimitPriceCommission(String id, BigDecimal price, long amount, Side direction){
+    private final String strategy;
+
+    public SimpleCommission(String id, BigDecimal price, long amount, Side direction){
+        this(id, price, amount, direction, "LIMIT_PRICE");
+    }
+
+    public SimpleCommission(String id, BigDecimal price, long amount, Side direction, String strategy){
         this.currentAmount = amount;
         this.price = price;
         this.direction = direction;
         this.id = id;
+        this.strategy = strategy;
+    }
+
+    @Override
+    public String getId() {
+        return this.id;
     }
 
     /**
@@ -44,17 +56,13 @@ public class LimitPriceCommission implements Commission {
     /**
      * 获取当前数量
      */
+    @Override
     public long getAmount() {
         return this.currentAmount;
     }
 
     @Override
-    public String getId() {
-        return this.id;
-    }
-
-    @Override
     public String getStrategy() {
-        return "LIMIT_PRICE";
+        return this.strategy;
     }
 }

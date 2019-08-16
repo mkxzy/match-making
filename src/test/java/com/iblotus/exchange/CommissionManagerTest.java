@@ -22,10 +22,10 @@ public class CommissionManagerTest {
     @Test
     public void testSubmitWithDeal(){
         TradeMarket manager = new TradeMarket();
-        LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
-        LimitPriceCommission commission2 =
-                new LimitPriceCommission("b",BigDecimal.valueOf(9), 1, Side.Short);
+        SimpleCommission commission1 =
+                new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
+        SimpleCommission commission2 =
+                new SimpleCommission("b",BigDecimal.valueOf(9), 1, Side.Short);
         manager.putOn(commission1);
         manager.putOn(commission2);
         Assert.assertEquals(0, manager.getLongs().size());
@@ -35,10 +35,10 @@ public class CommissionManagerTest {
     @Test
     public void testSubmitWithoutDeal(){
         TradeMarket manager = new TradeMarket();
-        LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
-        LimitPriceCommission commission2 =
-                new LimitPriceCommission("b",BigDecimal.valueOf(11), 1, Side.Short);
+        SimpleCommission commission1 =
+                new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
+        SimpleCommission commission2 =
+                new SimpleCommission("b",BigDecimal.valueOf(11), 1, Side.Short);
         manager.putOn(commission1);
         manager.putOn(commission2);
         Assert.assertEquals(1, manager.getLongs().size());
@@ -48,10 +48,10 @@ public class CommissionManagerTest {
     @Test(expected = DuplicateCommissionException.class)
     public void testSubmitWithDuplicateException(){
         TradeMarket manager = new TradeMarket();
-        LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
-        LimitPriceCommission commission2 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(11), 1, Side.Short);
+        SimpleCommission commission1 =
+                new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
+        SimpleCommission commission2 =
+                new SimpleCommission("a",BigDecimal.valueOf(11), 1, Side.Short);
         manager.putOn(commission1);
         manager.putOn(commission2);
     }
@@ -59,8 +59,8 @@ public class CommissionManagerTest {
     @Test
     public void testCancel(){
         TradeMarket manager = new TradeMarket();
-        LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
+        SimpleCommission commission1 =
+                new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         manager.putOn(commission1);
         manager.putOff("a");
         Assert.assertEquals(0, manager.getLongs().size());
@@ -69,8 +69,8 @@ public class CommissionManagerTest {
     @Test(expected = CommissionNotExistException.class)
     public void testCancelFail(){
         TradeMarket manager = new TradeMarket();
-        LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
+        SimpleCommission commission1 =
+                new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         manager.putOn(commission1);
         manager.putOff("b");
         Assert.assertEquals(0, manager.getLongs().size());
@@ -93,12 +93,12 @@ public class CommissionManagerTest {
         };
         doAnswer(answer).when(dealHandler).onDeal(any(Deal.class));
         TradeMarket manager = new TradeMarket(dealHandler);
-        LimitPriceCommission commission1 =
-                new LimitPriceCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
-        LimitPriceCommission commission2 =
-                new LimitPriceCommission("b",BigDecimal.valueOf(11), 1, Side.Long);
-        LimitPriceCommission commission3 =
-                new LimitPriceCommission("c",BigDecimal.valueOf(9), 2, Side.Short);
+        SimpleCommission commission1 =
+                new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
+        SimpleCommission commission2 =
+                new SimpleCommission("b",BigDecimal.valueOf(11), 1, Side.Long);
+        SimpleCommission commission3 =
+                new SimpleCommission("c",BigDecimal.valueOf(9), 2, Side.Short);
         manager.putOn(commission1);
         manager.putOn(commission2);
         manager.putOn(commission3);

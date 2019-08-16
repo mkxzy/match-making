@@ -10,17 +10,17 @@ public class OrderBookTest {
     @Test
     public void testAddLowFirst(){
 //        CommissionBook orderBook = CommissionBook.LowFirst();
-//        LimitPriceCommission commission1 = new LimitPriceCommission("1",BigDecimal.valueOf(1.1), 1, Side.Long);
-//        LimitPriceCommission commission2 = new LimitPriceCommission("2",BigDecimal.valueOf(1.5), 1, Side.Long);
-//        LimitPriceCommission commission3 = new LimitPriceCommission("3",BigDecimal.valueOf(1.2), 1, Side.Long);
-//        LimitPriceCommission commission4 = new LimitPriceCommission("4",BigDecimal.valueOf(1.3), 1, Side.Long);
-//        LimitPriceCommission commission5 = new LimitPriceCommission("5",BigDecimal.valueOf(1.3), 1, Side.Long);
+//        SimpleCommission commission1 = new SimpleCommission("1",BigDecimal.valueOf(1.1), 1, Side.Long);
+//        SimpleCommission commission2 = new SimpleCommission("2",BigDecimal.valueOf(1.5), 1, Side.Long);
+//        SimpleCommission commission3 = new SimpleCommission("3",BigDecimal.valueOf(1.2), 1, Side.Long);
+//        SimpleCommission commission4 = new SimpleCommission("4",BigDecimal.valueOf(1.3), 1, Side.Long);
+//        SimpleCommission commission5 = new SimpleCommission("5",BigDecimal.valueOf(1.3), 1, Side.Long);
 //        orderBook.add(commission1);
 //        orderBook.add(commission2);
 //        orderBook.add(commission3);
 //        orderBook.add(commission4);
 //        orderBook.add(commission5);
-//        LimitPriceCommission[] ids = new LimitPriceCommission[]{
+//        SimpleCommission[] ids = new SimpleCommission[]{
 //                commission1,
 //                commission3,
 //                commission4,
@@ -37,12 +37,12 @@ public class OrderBookTest {
 
 //    @Test
 //    public void testAddHighFirst(){
-//        CommissionBook<LimitPriceCommission> orderBook = CommissionBook.HighFirst();
-//        LimitPriceCommission commission1 = new LimitPriceCommission("1",1, BigDecimal.valueOf(1.1));
-//        LimitPriceCommission commission2 = new LimitPriceCommission("2",1, BigDecimal.valueOf(1.5));
-//        LimitPriceCommission commission3 = new LimitPriceCommission("3",1, BigDecimal.valueOf(1.2));
-//        LimitPriceCommission commission4 = new LimitPriceCommission("4",1, BigDecimal.valueOf(1.3));
-//        LimitPriceCommission commission5 = new LimitPriceCommission("5",1, BigDecimal.valueOf(1.1));
+//        CommissionBook<SimpleCommission> orderBook = CommissionBook.HighFirst();
+//        SimpleCommission commission1 = new SimpleCommission("1",1, BigDecimal.valueOf(1.1));
+//        SimpleCommission commission2 = new SimpleCommission("2",1, BigDecimal.valueOf(1.5));
+//        SimpleCommission commission3 = new SimpleCommission("3",1, BigDecimal.valueOf(1.2));
+//        SimpleCommission commission4 = new SimpleCommission("4",1, BigDecimal.valueOf(1.3));
+//        SimpleCommission commission5 = new SimpleCommission("5",1, BigDecimal.valueOf(1.1));
 //        orderBook.add(new CommissionRecorder<>(commission1));
 //        orderBook.add(new CommissionRecorder<>(commission2));
 //        orderBook.add(new CommissionRecorder<>(commission3));
