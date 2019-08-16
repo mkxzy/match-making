@@ -33,5 +33,5 @@ public interface Commission {
      * 委托策略
      * @return
      */
-    String getMatcher();
+    String getStrategy();
 }

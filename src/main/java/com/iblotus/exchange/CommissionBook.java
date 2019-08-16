@@ -12,9 +12,9 @@ public class CommissionBook implements PendingBook<PendingCommission> {
 
     private final CommissionLocateStrategy strategy;
 
-    private final List<CommissionBookListener> listeners = new ArrayList<>(2);
+//    private final List<CommissionBookListener> listeners = new ArrayList<>(2);
 
-    private CommissionBook(final CommissionLocateStrategy strategy){
+    public CommissionBook(final CommissionLocateStrategy strategy){
         this.strategy = strategy;
     }
 
@@ -26,9 +26,9 @@ public class CommissionBook implements PendingBook<PendingCommission> {
         return new CommissionBook(new LowPriceFirstCommissionStategy());
     }
 
-    void addListener(CommissionBookListener listener){
-        this.listeners.add(listener);
-    }
+//    void addListener(CommissionBookListener listener){
+//        this.listeners.add(listener);
+//    }
 
     /**
      * 根据ID查找委托
@@ -61,16 +61,16 @@ public class CommissionBook implements PendingBook<PendingCommission> {
      */
     @Override
     public int add(PendingCommission c){
-        int index = strategy.locate(c, this.list);
+        int index = strategy.findProperIndex(c, this.list);
         if(index >= 0){
             list.add(index, c);
         }else{
             list.add(c);
             index = list.size() - 1;
         }
-        for (CommissionBookListener listener: listeners) {
-            listener.onAdd(this, c);
-        }
+//        for (CommissionBookListener listener: listeners) {
+//            listener.onAdd(this, c);
+//        }
         return index;
     }
 
@@ -81,9 +81,9 @@ public class CommissionBook implements PendingBook<PendingCommission> {
     @Override
     public void remove(PendingCommission c){
         list.remove(c);
-        for (CommissionBookListener listener: listeners) {
-            listener.onRemove(this, c);
-        }
+//        for (CommissionBookListener listener: listeners) {
+//            listener.onRemove(this, c);
+//        }
     }
 
     @Override
@@ -107,26 +107,12 @@ public class CommissionBook implements PendingBook<PendingCommission> {
     }
 
     /**
-     * 委托定位策略
-     */
-    private interface CommissionLocateStrategy {
-
-        /**
-         * 查找任务的待插入索引
-         * 如果没有合适的，返回-1
-         * @param newCommition
-         * @return
-         */
-        int locate(PendingCommission newCommition, List<PendingCommission> list);
-    }
-
-    /**
      * 低价优先（二分查找法高性能）
      */
     private static class LowPriceFirstCommissionStategy implements CommissionLocateStrategy {
 
         @Override
-        public int locate(PendingCommission newCommition, List<PendingCommission> list) {
+        public int findProperIndex(PendingCommission newCommition, List<PendingCommission> list) {
             int mid;
             int start = 0;
             int end = list.size() - 1;
@@ -160,7 +146,7 @@ public class CommissionBook implements PendingBook<PendingCommission> {
     private static class HighPriceFirstCommissionStrategy implements CommissionLocateStrategy {
 
         @Override
-        public int locate(PendingCommission newCommition, List<PendingCommission> list) {
+        public int findProperIndex(PendingCommission newCommition, List<PendingCommission> list) {
             int mid;
             int start = 0;
             int end = list.size() - 1;

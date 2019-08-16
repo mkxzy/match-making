@@ -54,7 +54,7 @@ public class LimitPriceCommission implements Commission {
     }
 
     @Override
-    public String getMatcher() {
+    public String getStrategy() {
         return "LIMIT_PRICE";
     }
 }

@@ -37,8 +37,8 @@ public class PendingCommission implements Commission {
     }
 
     @Override
-    public String getMatcher() {
-        return commission.getMatcher();
+    public String getStrategy() {
+        return commission.getStrategy();
     }
 
     /**

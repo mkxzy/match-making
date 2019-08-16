@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  */
 public class CommissionMatchingBenchmarkTest {
 
-    private MatchMaker market = new MatchMaker();
+    private TradeMarket market = new TradeMarket();
 
     @Ignore
     @Test
@@ -28,7 +28,7 @@ public class CommissionMatchingBenchmarkTest {
                 direction = Side.Short;
             }
             LimitPriceCommission commission = new LimitPriceCommission(String.valueOf(i),BigDecimal.ONE, 1, direction);
-            market.matchNow(commission);
+            market.putOn(commission);
         }
         stopWatch.stop();
         System.out.println(market.getLongs().size());
