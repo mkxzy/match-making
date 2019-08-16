@@ -1,9 +1,6 @@
 package com.iblotus.exchange;
 
 
-import com.iblotus.exchange.exceptions.CommissionNotExistException;
-
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,10 +62,8 @@ public class CommissionHandicap {
             PendingCommission commission = commissionBook.find(id);
             if(commission != null){
                 commissionBook.remove(commission);
-                return;
             }
         }
-        throw new CommissionNotExistException();
     }
 
     public boolean contains(String id){
@@ -81,15 +76,5 @@ public class CommissionHandicap {
 
     public List<PendingCommission> getShort(){
         return this.shortBook.toList();
-    }
-
-    public Map<BigDecimal, List<PendingCommission>> getLongPriceAggr(Aggregator<PendingCommission, BigDecimal> aggregator){
-        List<PendingCommission> commissions = this.getLong();
-        return aggregator.aggregate(commissions);
-    }
-
-    public Map<BigDecimal, List<PendingCommission>> getShortPriceAggr(Aggregator<PendingCommission, BigDecimal> aggregator){
-        List<PendingCommission> commissions = this.getShort();
-        return aggregator.aggregate(commissions);
     }
 }

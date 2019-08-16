@@ -1,9 +1,12 @@
 package com.iblotus.exchange;
 
 
+import com.iblotus.exchange.exceptions.CommissionNotExistException;
 import com.iblotus.exchange.exceptions.DuplicateCommissionException;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -54,8 +57,8 @@ public class TradeMarket {
             if(this.handicap.contains(commission.getId())){
                 throw new DuplicateCommissionException();
             }
-            TradeStrategy commissionMatcher = new LimitPriceStrategy();
-            commissionMatcher.matchAndDeal(commission, handicap, dealHandler);
+            TradeStrategy tradeStrategy = strategyResolver.resolve(commission.getStrategy());
+            tradeStrategy.matchAndDeal(commission, handicap, dealHandler);
         }
     }
 
@@ -65,6 +68,9 @@ public class TradeMarket {
      */
     public void putOff(String id){
         synchronized (locker){
+            if(!this.handicap.contains(id)){
+                throw new CommissionNotExistException();
+            }
             handicap.removeById(id);
         }
     }
@@ -73,7 +79,7 @@ public class TradeMarket {
      * 买盘
      * @return
      */
-    public List<PendingCommission> getLongs() {
+    public List<PendingCommission> getLong() {
         return handicap.getLong();
     }
 
@@ -81,7 +87,17 @@ public class TradeMarket {
      * 卖盘
      * @return
      */
-    public List<PendingCommission> getShorts() {
+    public List<PendingCommission> getShort() {
         return handicap.getShort();
+    }
+
+    public Map<BigDecimal, List<PendingCommission>> getLongPriceAggr(Aggregator<PendingCommission, BigDecimal> aggregator){
+        List<PendingCommission> commissions = this.getLong();
+        return aggregator.aggregate(commissions);
+    }
+
+    public Map<BigDecimal, List<PendingCommission>> getShortPriceAggr(Aggregator<PendingCommission, BigDecimal> aggregator){
+        List<PendingCommission> commissions = this.getShort();
+        return aggregator.aggregate(commissions);
     }
 }

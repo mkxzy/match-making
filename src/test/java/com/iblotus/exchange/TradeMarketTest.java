@@ -28,8 +28,8 @@ public class TradeMarketTest {
                 new SimpleCommission("b",BigDecimal.valueOf(9), 1, Side.Short);
         manager.putOn(commission1);
         manager.putOn(commission2);
-        Assert.assertEquals(0, manager.getLongs().size());
-        Assert.assertEquals(0, manager.getShorts().size());
+        Assert.assertEquals(0, manager.getLong().size());
+        Assert.assertEquals(0, manager.getShort().size());
     }
 
     @Test
@@ -41,8 +41,8 @@ public class TradeMarketTest {
                 new SimpleCommission("b",BigDecimal.valueOf(11), 1, Side.Short);
         manager.putOn(commission1);
         manager.putOn(commission2);
-        Assert.assertEquals(1, manager.getLongs().size());
-        Assert.assertEquals(1, manager.getShorts().size());
+        Assert.assertEquals(1, manager.getLong().size());
+        Assert.assertEquals(1, manager.getShort().size());
     }
 
     @Test(expected = DuplicateCommissionException.class)
@@ -63,7 +63,7 @@ public class TradeMarketTest {
                 new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         manager.putOn(commission1);
         manager.putOff("a");
-        Assert.assertEquals(0, manager.getLongs().size());
+        Assert.assertEquals(0, manager.getLong().size());
     }
 
     @Test(expected = CommissionNotExistException.class)
@@ -73,7 +73,7 @@ public class TradeMarketTest {
                 new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         manager.putOn(commission1);
         manager.putOff("b");
-        Assert.assertEquals(0, manager.getLongs().size());
+        Assert.assertEquals(0, manager.getLong().size());
     }
 
     @Test

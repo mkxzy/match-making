@@ -31,8 +31,8 @@ public class CommissionMatchingBenchmarkTest {
             market.putOn(commission);
         }
         stopWatch.stop();
-        System.out.println(market.getLongs().size());
-        System.out.println(market.getShorts().size());
+        System.out.println(market.getLong().size());
+        System.out.println(market.getShort().size());
         System.out.println(stopWatch.getTime());
         System.out.println("TPS: " + (count * 1000 / stopWatch.getTime()));
     }
