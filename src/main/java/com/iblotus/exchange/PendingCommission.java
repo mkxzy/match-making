@@ -88,7 +88,7 @@ public class PendingCommission implements Commission {
      * 获取剩余数量
      * @return
      */
-    private long getCurrentAmount() {
+    public long getCurrentAmount() {
         return this.getAmount() - this.getDealAmount();
     }
 }

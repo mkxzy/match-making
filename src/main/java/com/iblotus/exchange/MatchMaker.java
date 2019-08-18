@@ -10,31 +10,31 @@ import java.util.Map;
 
 
 /**
- * 委托管理
- *
- * 处理委托，维护委托队列
+ * 撮合
  */
-public class TradeMarket {
+public class MatchMaker {
 
+    // 同步锁
     private final Object locker = new Object();
-
-    // 成交处理
-    private DealHandler dealHandler;
 
     // 盘口
     private final CommissionHandicap handicap = new CommissionHandicap();
 
+    // 策略库
     private TradeStrategyResolver strategyResolver;
 
-    public TradeMarket(){
+    // 成交处理
+    private DealHandler dealHandler;
+
+    public MatchMaker(){
         this.init(null, new DefaultTradeStrategyResolver());
     }
 
-    public TradeMarket(DealHandler dealHandler){
+    public MatchMaker(DealHandler dealHandler){
         this.init(dealHandler, new DefaultTradeStrategyResolver());
     }
 
-    public TradeMarket(DealHandler dealHandler, TradeStrategyResolver resolver){
+    public MatchMaker(DealHandler dealHandler, TradeStrategyResolver resolver){
         this.init(dealHandler, resolver);
     }
 
@@ -91,13 +91,11 @@ public class TradeMarket {
         return handicap.getShort();
     }
 
-    public Map<BigDecimal, List<PendingCommission>> getLongPriceAggr(Aggregator<PendingCommission, BigDecimal> aggregator){
-        List<PendingCommission> commissions = this.getLong();
-        return aggregator.aggregate(commissions);
+    public Map<BigDecimal, List<PendingCommission>> getLongAggr(PriceAggregator aggregator, int depth){
+        return aggregator.aggregate(this.getLong(), depth);
     }
 
-    public Map<BigDecimal, List<PendingCommission>> getShortPriceAggr(Aggregator<PendingCommission, BigDecimal> aggregator){
-        List<PendingCommission> commissions = this.getShort();
-        return aggregator.aggregate(commissions);
+    public Map<BigDecimal, List<PendingCommission>> getShortAggr(PriceAggregator aggregator, int depth){
+        return aggregator.aggregate(this.getShort(), depth);
     }
 }

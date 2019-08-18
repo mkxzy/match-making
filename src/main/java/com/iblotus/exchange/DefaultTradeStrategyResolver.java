@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * 默认交易策略库
+ */
 public class DefaultTradeStrategyResolver implements TradeStrategyResolver {
 
     private Map<String, TradeStrategy> strategyMap = new HashMap<>();

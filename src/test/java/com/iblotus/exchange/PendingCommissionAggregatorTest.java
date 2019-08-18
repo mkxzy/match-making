@@ -24,7 +24,7 @@ public class PendingCommissionAggregatorTest {
         commissionList.add(new PendingCommission(commission2));
         commissionList.add(new PendingCommission(commission3));
 
-        PendingCommissionAggregator aggregator = new PendingCommissionAggregator();
+        DefaultPriceAggregator aggregator = new DefaultPriceAggregator();
         Map<BigDecimal, ?> map = aggregator.aggregate(commissionList);
         Assert.assertEquals(2, map.size());
     }

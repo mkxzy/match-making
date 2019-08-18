@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  */
 public class CommissionMatchingBenchmarkTest {
 
-    private TradeMarket market = new TradeMarket();
+    private MatchMaker market = new MatchMaker();
 
     @Ignore
     @Test

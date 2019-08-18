@@ -21,7 +21,7 @@ public class TradeMarketTest {
 
     @Test
     public void testSubmitWithDeal(){
-        TradeMarket manager = new TradeMarket();
+        MatchMaker manager = new MatchMaker();
         SimpleCommission commission1 =
                 new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         SimpleCommission commission2 =
@@ -34,7 +34,7 @@ public class TradeMarketTest {
 
     @Test
     public void testSubmitWithoutDeal(){
-        TradeMarket manager = new TradeMarket();
+        MatchMaker manager = new MatchMaker();
         SimpleCommission commission1 =
                 new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         SimpleCommission commission2 =
@@ -47,7 +47,7 @@ public class TradeMarketTest {
 
     @Test(expected = DuplicateCommissionException.class)
     public void testSubmitWithDuplicateException(){
-        TradeMarket manager = new TradeMarket();
+        MatchMaker manager = new MatchMaker();
         SimpleCommission commission1 =
                 new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         SimpleCommission commission2 =
@@ -58,7 +58,7 @@ public class TradeMarketTest {
 
     @Test
     public void testCancel(){
-        TradeMarket manager = new TradeMarket();
+        MatchMaker manager = new MatchMaker();
         SimpleCommission commission1 =
                 new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         manager.putOn(commission1);
@@ -68,7 +68,7 @@ public class TradeMarketTest {
 
     @Test(expected = CommissionNotExistException.class)
     public void testCancelFail(){
-        TradeMarket manager = new TradeMarket();
+        MatchMaker manager = new MatchMaker();
         SimpleCommission commission1 =
                 new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         manager.putOn(commission1);
@@ -92,7 +92,7 @@ public class TradeMarketTest {
             }
         };
         doAnswer(answer).when(dealHandler).onDeal(any(Deal.class));
-        TradeMarket manager = new TradeMarket(dealHandler);
+        MatchMaker manager = new MatchMaker(dealHandler);
         SimpleCommission commission1 =
                 new SimpleCommission("a",BigDecimal.valueOf(10), 1, Side.Long);
         SimpleCommission commission2 =
